@@ -15,7 +15,7 @@ public abstract class Inimigo extends Personagem{
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Inimigo(String nome, String classe, int pontoForte, int arma, int armadura){
+    public Inimigo(String nome, String classe, Foco pontoForte, int arma, int armadura){
         super(nome,classe,pontoForte,arma,armadura);
     }
     

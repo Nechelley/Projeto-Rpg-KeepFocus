@@ -19,7 +19,7 @@ public class Marrento extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Marrento(int pontoForte, int arma, int armadura) {
+    public Marrento(Foco pontoForte, int arma, int armadura) {
         super("Marrento "+String.valueOf(numInstancias+1),"Marrento",pontoForte,arma,armadura);
         numInstancias++;
     }

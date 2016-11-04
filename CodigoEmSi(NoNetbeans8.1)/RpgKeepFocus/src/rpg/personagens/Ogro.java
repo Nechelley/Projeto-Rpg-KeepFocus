@@ -19,7 +19,7 @@ public class Ogro extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Ogro(int pontoForte, int arma, int armadura) {
+    public Ogro(Foco pontoForte, int arma, int armadura) {
         super("Ogro "+String.valueOf(numInstancias+1),"Ogro",pontoForte,arma,armadura);
         numInstancias++;
     }

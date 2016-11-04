@@ -13,6 +13,7 @@ import rpg.personagens.Goblin;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import rpg.personagens.Foco;
 
 /**
  *
@@ -333,10 +334,12 @@ public class Jogo implements Serializable{
     public void adicionarHeroi(String nome, String classe, int pontoForte, int arma, int armadura){
         if(asBatalhasJaComecaram)
             throw new AcaoInvalidaException("adicionar heroi",2);
-        Personagem p = new Heroi(nome,classe,pontoForte,arma,armadura);
+        Foco pf = Foco.getPontoFortePorId(pontoForte);
+        
+        Personagem p = new Heroi(nome,classe,pf,arma,armadura);
         
         //adiciona a habilidade do heroi no índice de habilidade total
-        habilidade += p.getPontoSaude() + arma + armadura;
+        habilidade += p.getNivelDeSaude() + arma + armadura;
         
         timeDosHerois.add(p);
     }
@@ -640,7 +643,7 @@ public class Jogo implements Serializable{
         Inimigo i = null;
         Random aleatorio = new Random();
         int arma = 0,armadura = 0;
-        int pontoForte = aleatorio.nextInt(4);
+        Foco pontoForte = Foco.getPontoFortePorId(aleatorio.nextInt(4));
         switch (id) {
             case 0:
                 arma = aleatorio.nextInt(2);
@@ -687,7 +690,7 @@ public class Jogo implements Serializable{
         if (i != null){
             
             
-            dificuldade += i.getPontoSaude() + arma + armadura;
+            dificuldade += i.getNivelDeSaude() + arma + armadura;
             
             return i;
         } else {
@@ -1165,7 +1168,7 @@ public class Jogo implements Serializable{
      * @return int com a saude do lutador
      */
     public int inimigoGetSaude(int pos){
-        return getInimigoNaPosicao(pos).getPontoSaude();
+        return getInimigoNaPosicao(pos).getNivelDeSaude();
     }
     
     /**
@@ -1243,7 +1246,7 @@ public class Jogo implements Serializable{
         //reinicio os pontos de acao para o proximo turno //ativo os xbuffs
         String relatorio = "Aconteceu na passagem de turnos:\n";
         for(Personagem l : list){
-            l.setPontosDeAcao(2);
+            l.resetarPontosDeAcao();
             relatorio += l.receberXBuffs();
         }
         batalhaAtual.passarTurno();

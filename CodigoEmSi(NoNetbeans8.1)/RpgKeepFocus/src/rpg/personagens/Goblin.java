@@ -19,7 +19,7 @@ public class Goblin extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Goblin(int pontoForte, int arma, int armadura) {
+    public Goblin(Foco pontoForte, int arma, int armadura) {
         super("Goblin "+String.valueOf(numInstancias+1),"Goblin",pontoForte,arma,armadura);
         numInstancias++;
     }

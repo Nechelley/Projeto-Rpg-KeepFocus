@@ -19,7 +19,7 @@ public class Esqueleto extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Esqueleto(int pontoForte, int arma, int armadura) {
+    public Esqueleto(Foco pontoForte, int arma, int armadura) {
         super("Esqueleto "+String.valueOf(numInstancias+1),"Esqueleto",pontoForte,arma,armadura);
         numInstancias++;
     }

@@ -19,7 +19,7 @@ public class Zumbi extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Zumbi(int pontoForte, int arma, int armadura) {
+    public Zumbi(Foco pontoForte, int arma, int armadura) {
         super("Zumbi "+String.valueOf(numInstancias+1),"Zumbi",pontoForte,arma,armadura);
         numInstancias++;
     }

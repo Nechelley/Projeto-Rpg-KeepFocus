@@ -19,7 +19,7 @@ public class Incendiario extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Incendiario(int pontoForte, int arma, int armadura) {
+    public Incendiario(Foco pontoForte, int arma, int armadura) {
         super("Incendiario "+String.valueOf(numInstancias+1),"Incendiario",pontoForte,arma,armadura);
         numInstancias++;
     }

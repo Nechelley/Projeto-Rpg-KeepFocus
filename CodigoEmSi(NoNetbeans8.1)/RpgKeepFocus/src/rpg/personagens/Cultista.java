@@ -19,7 +19,7 @@ public class Cultista extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Cultista(int pontoForte, int arma, int armadura) {
+    public Cultista(Foco pontoForte, int arma, int armadura) {
         super("Cultista "+String.valueOf(numInstancias+1),"Cultista",pontoForte,arma,armadura);
         numInstancias++;
     }

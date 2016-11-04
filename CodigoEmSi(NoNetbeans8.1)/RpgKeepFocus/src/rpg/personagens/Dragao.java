@@ -19,7 +19,7 @@ public class Dragao extends Inimigo {
      * @param arma Int dizendo qual o tipo de arma o personagem usara
      * @param armadura Int com qual o tipo de armadura o personagem usara
      */
-    public Dragao(int pontoForte, int arma, int armadura) {
+    public Dragao(Foco pontoForte, int arma, int armadura) {
         super("Dragao "+String.valueOf(numInstancias+1),"Dragao",pontoForte,arma,armadura);
         numInstancias++;
     }
