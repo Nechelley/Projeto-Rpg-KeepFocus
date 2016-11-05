@@ -7,14 +7,16 @@ package rpg.personagens;
  * @author Nechelley Alves
  */
 public enum Arma {
-    PEQUENA(0,"Pequena"),MEDIA(1,"Média"),GRANDE(2,"Grande");
+    PEQUENA(0,"Pequena",0),MEDIA(1,"Média",1),GRANDE(2,"Grande",2);
     
     private final int id;
     private final String nome;
+    private final int valor;
     
-    private Arma(int id, String nome){
+    private Arma(int id, String nome, int valor){
         this.id = id;
         this.nome = nome;
+        this.valor = valor;
     }
     
     /**
@@ -29,5 +31,12 @@ public enum Arma {
      */
     public String getString(){
         return nome;
+    }
+    
+    /**
+     * @return Int com o valor da força da arma
+     */
+    public int getValor(){
+        return valor;
     }
 }

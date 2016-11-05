@@ -1,34 +1,33 @@
 package rpg.golpes;
 
-import rpg.xbuff.XBuff;
-
 /**
- *
- * @author neche
+ * Golpe do tipo ataque magico, coma atributo fogo
+ * dano = ((d6/2) + 1)
+ * chance = 10
+ * custo = 2
+ * 
+ * @author Nechelley Alves
  */
 public class GolpeMagicoBolaDeFogo extends GolpeMagico{
-    private XBuff queimacao;
+    /**
+     * Construtor do golpe
+     * 
+     * @param nome Nome do golpe
+     */
     public GolpeMagicoBolaDeFogo(String nome) {
         super(nome);
-        setDano(1);
-        setChanceDeAcerto(5);
+        setDanoBase(1);
+        setChanceDeAcerto(10);
         setCustoDeAcao(2);
-        queimacao = new XBuff("queimacao",2, 0, 2);
     }
     
-    @Override
-    public XBuff getXBuff(){
-        return queimacao;
-    }
-    
+    /**
+     * Calculo do dano do ataque
+     * 
+     * @param valorDoDado Valor do dado jogado
+     */
     @Override
     public void setDanoEmBatalha(int valorDoDado){
-        setDano(Math.round(valorDoDado/2) + getDano());
-    }
-    
-    @Override
-    public String getTipo() {
-        return "fogo";
-    }
-    
+        setDano(Math.round(valorDoDado/2) + getDanoBase());
+    }    
 }

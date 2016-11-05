@@ -2,12 +2,12 @@ package rpg.personagens;
 
 /**
  * Representa o estado de um personagem que pode estar em estado de:
- * 0-Esquiva ou 1-Defendendo ou 2-Congelado
+ * 0-Esquiva ou 1-Defendendo
  * 
  * @author Nechelley Alves
  */
 public enum Estado {
-    ESQUIVANDO(0,"Esquivando"),DEFENDENDO(1,"Defendendo"),CONGELADO(2,"Congelando");
+    ESQUIVANDO(0,"Esquivando"),DEFENDENDO(1,"Defendendo");
     
     private final int id;
     private final String nome;

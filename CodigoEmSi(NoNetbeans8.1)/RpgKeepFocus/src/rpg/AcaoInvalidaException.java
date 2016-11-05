@@ -33,6 +33,10 @@ public class AcaoInvalidaException extends RuntimeException{
                 return "Golpe usado durante o ataque é invalido.";
             case 2:
                return "A acao nao pode ser executada devido ao fato do turno de batalhas ja ter começado.";
+            case 3:
+               return "Personagem já esta em estado de esquiva.";
+            case 4:
+               return "Personagem já esta em estado de defesa.";
             default:
                 return "Sem motivo fornecido.";
         }

@@ -7,14 +7,16 @@ package rpg.personagens;
  * @author Nechelley Alves
  */
 public enum Armadura {
-    NADA(0,"Nada"),LEVE(1,"Leve"),PESADA(2,"Pesada");
+    NADA(0,"Nada",0),LEVE(1,"Leve",1),PESADA(2,"Pesada",2);
     
     private final int id;
     private final String nome;
+    private final int valor;
     
-    private Armadura(int id, String nome){
+    private Armadura(int id, String nome,int valor){
         this.id = id;
         this.nome = nome;
+        this.valor= valor;
     }
     
     /**
@@ -29,5 +31,12 @@ public enum Armadura {
      */
     public String getString(){
         return nome;
+    }
+    
+    /**
+     * @return Int com o valor da armadura
+     */
+    public int getValor(){
+        return valor;
     }
 }
