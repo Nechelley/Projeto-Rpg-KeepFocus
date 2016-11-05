@@ -1,4 +1,5 @@
 package rpg;
+
 import java.io.Serializable;
 import java.util.Random;
 

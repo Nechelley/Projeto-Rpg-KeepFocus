@@ -1,7 +1,7 @@
 package rpg.golpes;
 
 import java.io.Serializable;
-import rpg.InfInvalidoException;
+import rpg.excecoes.InfInvalidoException;
 
 /**
  * Representa um golpe dentro do jogo, ele sera executado por um Personagem durante um ataque

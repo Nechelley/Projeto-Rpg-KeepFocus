@@ -1,8 +1,10 @@
-package rpg;
+package rpg.excecoes;
 
 /**
- *
- * @author neche
+ * Excecao para quando uma acao for executada errado, por exemplo quando se tentar 
+ * atacar mas o personagem nao possui pontos de acao suficientes
+ * 
+ * @author Nechelley Alves
  */
 public class AcaoInvalidaException extends RuntimeException{
     //motivo do erro
@@ -16,6 +18,8 @@ public class AcaoInvalidaException extends RuntimeException{
      * sendo 0 para pontos insuficientes,
      * 1 para quando durante um ataque o golpe usado é invalido
      * 2 para quando a acao nao pode ser executada devido ao fato do turno de batalhas ja ter comecado
+     * 3 para quando o personagem ja esta em estado de esquiva
+     * 4 para quando o personagem ja esta em estado de defesa
      * -1 para quando nao ha motivos
      */
     public AcaoInvalidaException(String acao, int motivo){

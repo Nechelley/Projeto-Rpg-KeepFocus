@@ -10,7 +10,8 @@ package rpg.personagens;
 public enum Classe {
     GUERREIRO(0,"Guerreiro"),MAGO(1,"Mago"),CLERIGO(2,"Clérigo"),ZUMBI(3,"Zumbi"),
     ESQUELETO(4,"Esqueleto"),DRAGAO(5,"Dragão"),GOBLIN(6,"Goblin"),CULTISTA(7,"Cultista"),
-    OGRO(8,"Ogro");
+    OGRO(8,"Ogro"),BIG(9,"Big"),MARRENTO(10,"Marrento"),INCENDIARIO(11,"Incendiário"),
+    CHEFE(12,"Chefe");
     
     private final int id;
     private final String nome;

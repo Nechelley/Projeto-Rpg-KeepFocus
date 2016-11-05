@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rpg.personagens;
 
 /**
- *
- * @author paulo
+ * Uma classe de Inimigo 
+ * 
+ * @author Paulo, Nechelley Alves
  */
 public class Chefe extends Inimigo {
     
@@ -15,12 +11,13 @@ public class Chefe extends Inimigo {
     
     /**
      * Construtor da classe Chefe
-     * @param pontoForte Int com qual sera o ponto forte do personagem
-     * @param arma Int dizendo qual o tipo de arma o personagem usara
-     * @param armadura Int com qual o tipo de armadura o personagem usara
+     * 
+     * @param foco Foco com qual sera o ponto forte do personagem
+     * @param arma Arma dizendo qual o tipo de arma o personagem usara
+     * @param armadura Armadura com qual o tipo de armadura o personagem usara
      */
-    public Chefe(Foco pontoForte, int arma, int armadura) {
-        super("Chefe "+String.valueOf(numInstancias+1),"Chefe",pontoForte,arma,armadura);
+    public Chefe(Foco foco, Arma arma, Armadura armadura) {
+        super("Chefe "+String.valueOf(numInstancias+1),Classe.CHEFE,foco,arma,armadura);
         numInstancias++;
     }
     

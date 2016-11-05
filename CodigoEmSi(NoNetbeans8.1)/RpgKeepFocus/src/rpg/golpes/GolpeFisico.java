@@ -1,6 +1,6 @@
 package rpg.golpes;
 
-import rpg.InfInvalidoException;
+import rpg.excecoes.InfInvalidoException;
 import rpg.personagens.Arma;
 
 /**

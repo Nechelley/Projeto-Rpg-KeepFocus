@@ -1,5 +1,7 @@
 package rpg;
 
+import rpg.excecoes.AcaoInvalidaException;
+
 /**
  *
  * @author neche

@@ -1,5 +1,8 @@
 package rpg;
 
+import rpg.batalhas.Batalha;
+import rpg.excecoes.AcaoInvalidaException;
+import rpg.excecoes.InfInvalidoException;
 import java.io.Serializable;
 import rpg.personagens.Dragao;
 import rpg.personagens.Ogro;

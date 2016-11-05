@@ -5,6 +5,7 @@
  */
 package rpg;
 
+import rpg.excecoes.InfInvalidoException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
