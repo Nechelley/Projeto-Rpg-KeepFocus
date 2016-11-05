@@ -2,7 +2,7 @@ package rpg.personagens;
 
 /**
  * Representa um atributo (a armadura) do personagem:
- *  Nada ou Leve ou Pesada
+ * 0-Nada ou 1-Leve ou 2-Pesada
  * 
  * @author Nechelley Alves
  */
@@ -18,14 +18,14 @@ public enum Armadura {
     }
     
     /**
-     * @return String com o id da armadura
+     * @return Int com o id da armadura
      */
     public int getId(){
         return id;
     }
     
     /**
-     * @return String com o nome da armadura
+     * @return String com o nome do tipo da armadura
      */
     public String getString(){
         return nome;

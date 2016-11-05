@@ -2,7 +2,7 @@ package rpg.personagens;
 
 /**
  * Representa um atributo (o foco) do personagem:
- *  Força ou Destreza ou Constituição ou Carisma
+ * 0-Força ou 1-Destreza ou 2-Constituição ou 3-Carisma
  * 
  * @author Nechelley Alves
  */
@@ -47,7 +47,7 @@ public enum Foco {
     }
     
     /**
-     * @return String com o id do foco
+     * @return Int com o id do foco
      */
     public int getId(){
         return id;

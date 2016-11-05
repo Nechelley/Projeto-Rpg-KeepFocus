@@ -49,9 +49,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
     //quantidade de dano recebido pelo personagem em certo momento
     private int danoRecebido;
     //situação do estado de vida do personagem com base no danoRecebido podendo ser: 
-    //0-Saudável     1-Atordoado     2-Desesperado     3-Inconsciente   4-Morto
-    //20% dano       40% dano        60% dano          99% dano         100% dano
-    private int situacaoDeVida;
+    //Saudável ou Atordoado ou Desesperado ou Inconsciente ou Morto
+    private SituacaoDeVida situacaoDeVida;
     
     //quantos pontos o personagem tem de iniciativa, que determina quem começa a ação em uma batalha
     private int iniciativa;
@@ -72,22 +71,22 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      * 
      * @param nome String com o nome do personagem
      * @param classe String com qual sera a classe do personagem
-     * @param pontoForte Int com qual sera o ponto forte do personagem
-     * @param arma Int dizendo qual o tipo de arma o personagem usara
-     * @param armadura Int com qual o tipo de armadura o personagem usara
+     * @param foco Foco com qual sera o ponto forte do personagem
+     * @param arma Arma dizendo qual o tipo de arma o personagem usara
+     * @param armadura Armadura com qual o tipo de armadura o personagem usara
      */
-    public Personagem(String nome, Classe classe, Foco pontoForte, Arma arma, Armadura armadura){
+    public Personagem(String nome, Classe classe, Foco foco, Arma arma, Armadura armadura){
             if(!verificaNome(nome))
                 throw new InfInvalidoException("Nome",nome);
             this.nome = nome;
             this.classe = classe;
-            this.foco = pontoForte;
+            this.foco = foco;
             
-            this. nivelDeSaude = calculaPontoSaude();
+            this. nivelDeSaude = calculaNivelDeSaude();
             
             danoRecebido = 0;
             danoRecebidoMaximo = nivelDeSaude*5;
-            situacaoDeVida = 0;
+            this.situacaoDeVida = SituacaoDeVida.SAUDAVEL;
                     
             this.arma = arma;
             this.armadura = armadura;
@@ -132,22 +131,23 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
     }
     /**
      * Define os pontos de saúde do personagem de acordo com a classe e ponto forte.
-     * @return quantos pontos o personagem tera de pontos de saude
+     * 
+     * @return Qual sera o nivel de saude do personagem
      */
-    private int calculaPontoSaude() {
-        //Pontos de saúde padrão para as classes não listadas
-        int ps = 4;
+    private int calculaNivelDeSaude() {
+        //Nivel de saude padrão para as classes não listadas
+        int ns = 4;
         
         if(classe == Classe.GUERREIRO || classe == Classe.OGRO)
-            ps = 3;
+            ns = 3;
         else if (classe == Classe.GOBLIN || classe == Classe.CULTISTA ||
                 classe == Classe.ZUMBI)
-            ps = 2;
+            ns = 2;
         
         if(foco == Foco.CONSTITUICAO)//isso é para o caso do personagem tiver ponto forte em constituição
-            ps++;
+            ns++;
         
-        return ps;
+        return ns;
     }
     
     /**
@@ -175,9 +175,11 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
     
     
     
-    //ACAO ESQUIVAR
     /**
-     * Faz com que o personagem entre em estado de esquiva
+     * ACAO ESQUIVAR
+     * 
+     * Faz com que o personagem entre em estado de esquiva,
+     * gastando um ponto de acao
      */
     public void esquivar(){
         if(pontosDeAcao <= 0)
@@ -186,11 +188,11 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         estados.add(Estado.ESQUIVANDO);
     }
     
-    
-    
-    //ACAO DEFENDER
     /**
-     * Faz com que o personagem entre em estado de defesa
+     * ACAO DEFENDER
+     * 
+     * Faz com que o personagem entre em estado de defesa,
+     * gastando um ponto de acao
      */
     public void defender(){
         if(pontosDeAcao <= 0)
@@ -198,26 +200,24 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         pontosDeAcao--;
         estados.add(Estado.DEFENDENDO);
     }
-        
-        
-        
-        
+    
+    
+    
     //ACAO ATACAR
     
     /**
      * Ação atacar, o personagem que executa esta ação escolhe um alvo e causa dano nele.
      * 
      * @param alvo Personagem que recebera o ataque
-     * @param golpe String com o nome do golpe que esta sendo executado
+     * @param golpe Golpe que esta sendo executado
      * @return int onde (-1) significa que o ataque nao acertou o alvo,
      * (-2) significa que o alvo esquivou, (100 + dano) signifa que o alvo defendendeu
      * e qualquer outro valor significa que o ataque acertou e o metodo esta retornando o dano
      */
-    public String atacar(Personagem alvo, String golpe){
-        Golpe g = getGolpePeloNome(golpe);
-        if(g == null)//vejo se o golpe e valido
+    public String atacar(Personagem alvo, Golpe golpe){
+        if(golpe == null)//vejo se o golpe e valido
             throw new AcaoInvalidaException("atacar",1);
-        int custoDaAcao = g.getCustoDeAcao();
+        int custoDaAcao = golpe.getCustoDeAcao();
         if(custoDaAcao > pontosDeAcao)// vejo se o personagem tem pontos de acao suficientes
             throw new AcaoInvalidaException("atacar",0);
         //cobro o custo

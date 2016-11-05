@@ -2,7 +2,8 @@ package rpg.personagens;
 
 /**
  * Representa um atributo (a classe) do personagem:
- *  Guerreiro ou Mago ou Clerigo ou Zumbi ou Esqueleto ou Dragao ou Goblin ou Cultista ou Ogro
+ * 0-Guerreiro ou 1-Mago ou 2-Clerigo ou 3-Zumbi ou 4-Esqueleto ou 
+ * 5-Dragao ou 6-Goblin ou 7-Cultista ou 8-Ogro
  * 
  * @author Nechelley Alves
  */
@@ -20,7 +21,7 @@ public enum Classe {
     }
     
     /**
-     * @return String com o id da classe
+     * @return Int com o id da classe
      */
     public int getId(){
         return id;
