@@ -11,7 +11,7 @@ public class Main {
         try{
             TelaDoJogo tela = new TelaDoJogo();
 
-            tela.exibir();
+            tela.exibirInicio();
         }
         catch(AcaoInvalidaException e){
             System.out.println(e.getMessage());

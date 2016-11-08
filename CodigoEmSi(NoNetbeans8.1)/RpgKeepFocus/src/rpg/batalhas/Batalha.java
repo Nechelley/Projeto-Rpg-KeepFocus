@@ -50,7 +50,7 @@ public class Batalha implements Serializable{
     /**
      * Inicializa a batalha
      */
-    public void comecarBatalha(){
+    public void iniciarBatalha(){
         //defino que a batalha esta ocorrendo
         situacaoDaBatalha = SituacaoDaBatalha.OCORRENDO;
         //defino qual sera a ordem de acao dos personagens

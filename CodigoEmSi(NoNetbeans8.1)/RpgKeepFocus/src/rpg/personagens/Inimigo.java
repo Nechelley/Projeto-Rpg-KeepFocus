@@ -39,4 +39,13 @@ public abstract class Inimigo extends Personagem{
     public boolean getEhHeroi(){
         return false;
     }
+    
+    /**
+     * Verifica quantos tipos de inimigos existem
+     * 
+     * @return Int com a quantidade de classes de inimigos existentes
+     */
+    public static int numDeClassesDeInimigos(){
+        return 10;
+    }
 }

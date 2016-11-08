@@ -20,6 +20,32 @@ public enum Armadura {
     }
     
     /**
+     * Retorna a Armadura passando um id
+     * 
+     * @param id int com o numero de identificacao da armadura
+     * @return Armadura procurado, ou null caso nao encontre
+     */
+    public static Armadura getArmaduraPorId(int id){
+        if(id > 2 || id < 0)
+            return null;
+        Armadura a = null;
+        switch (id) {
+            case 0:
+                a = Armadura.NADA;
+                break;
+            case 1:
+                a = Armadura.LEVE;
+                break;
+            case 2:
+                a = Armadura.PESADA;
+                break;
+            default:
+                break;
+        }
+        return a;
+    }
+    
+    /**
      * @return Int com o id da armadura
      */
     public int getId(){

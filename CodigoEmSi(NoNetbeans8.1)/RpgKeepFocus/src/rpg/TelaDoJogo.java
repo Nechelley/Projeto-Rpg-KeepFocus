@@ -13,226 +13,86 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         rpg = new Jogo(this);
     }
     
-    public void exibir(){
+    public void exibirInicio(){
         System.out.println("\n- Rpg The Game -");
-        boolean loop = true;
-        while (loop){
-            
-            if (novoJogo()) {
-                
-                loop = false;
-                rpg.comecar(true);
-                
-            } else {
-
-                Jogo j = null;
-
-
-                try {
-                    j = rpg.carregarJogo();
-                } catch (Exception e) {
-                    System.out.println("Erro: "+e.getMessage());
-                }
-
-                if (j != null) {
-                    
-                }
-            }
-        }
-    }
-    
-    @Override
-    public String lerNomeArquivo(String operacao) {
-        System.out.println("Digite o nome do arquivo a ser "+operacao+":");
-        Scanner scan = new Scanner (System.in);
-        return scan.nextLine();
-    }
-    
-    @Override
-    public void arquivoInvalido(String mensagem,boolean criar) {
-        if (criar) {
-            System.out.println("Erro ao criar arquivo: "+mensagem);
-        } else {
-            System.out.println("Erro ao carregar arquivo: "+mensagem);
-        }
-    }
-    
-    @Override
-    public void personagemArquivoInvalido(int linha) {
-        System.out.println("Erro ao adicionar personagem na linha "+String.valueOf(linha));
-    }
-    
-    private boolean novoJogo() {
-        System.out.println("Deseja começar NOVO jogo ou CARREGAR jogo salvo?");
-        Scanner scan = new Scanner (System.in);
-        boolean loop = true;
-        do {
-            String opcao = scan.nextLine();
-            if (opcao.equals("NOVO")) {
-                loop = false;
-                return true;
-            } else if (opcao.equals("CARREGAR")) {
-                loop = false;
-                return false;
-            } else {
-                System.out.println("Opção inválida.");
-            }
-        } while (loop);
-        return true;
-    }
-    
-    @Override
-    public boolean decideCarregarHerois() {
-        Scanner scan = new Scanner (System.in);
-        System.out.println("Você deseja CRIAR novos heróis ou CARREGAR um time de um arquivo?");
-        boolean loop = true;
-        while (loop) {
-            String opcao = scan.nextLine();
-            if (opcao.equals("CRIAR")) {
-                return false;
-            } else if (opcao.equals("CARREGAR")) {
-                return true;
-            } else {
-                System.out.println("Opção inválida.");
-            }
-        }
-        return false;
-    }
-    
-    @Override
-    public boolean decideSalvarHerois() {
-        Scanner scan = new Scanner (System.in);
-        System.out.println("Você deseja salvar os heróis criados? (s/n)");
-        boolean loop = true;
-        while (loop) {
-            String opcao = scan.nextLine();
-            if (opcao.equals("s")) {
-                return true;
-            } else if (opcao.equals("n")) {
-                return false;
-            } else {
-                System.out.println("Opção inválida.");
-            }
-        }
-        return false;
+        rpg.iniciar();
     }
     
     /**
      * Le as informacoes informaçoes do heroi na ordem
-     * {nome,classe,ponto Forte,arma,armadura}
+     * {nome,classe,foco,arma,armadura}
      * 
-     * @return vetor de Strings com as informaçoes do heroi
+     * @return Vetor de Strings com as informaçoes do heroi
      */
-    private String[] lerInformacoesParaCriarHeroi(){
+    @Override
+    public String[] lendoHeroi(){
         Scanner scan = new Scanner (System.in);
         System.out.println("Insira o nome do personagem:");
         String nome = scan.nextLine();
         System.out.println("Insira a classe do personagem:\n"
-                + "Guerreiro, Mago ou Clerigo");
+                + "1-Guerreiro 2-Mago 3-Clerigo");
         String classe = scan.next();
-        System.out.println("Insira o ponto forte do personagem:\n"
-                + "0: Força 1: Destreza 2: Constituição 3: Carisma");
-        String pontoForte = scan.next();
+        System.out.println("Insira o foco do personagem:\n"
+                + "1-Força 2-Destreza 3-Constituição 4-Carisma");
+        String foco = scan.next();
         System.out.println("Insira qual é a arma do personagem:\n"
-                + "0: Pequena 1: Média 2: Grande");
+                + "1-Pequena 2-Média 3-Grande");
         String arma = scan.next();
-        System.out.println("Insira qual é a armadura do personagem:\n"
-                + "Valor de 0 até 2");
+        System.out.println("Insira qual é o tipo de armadura do personagem:\n"
+                + "1-Nada 2-Leve 3-Pesada");
         String armadura = scan.next();
         
-        String[] heroi = {nome,classe,pontoForte,arma,armadura};
+        String[] heroi = {nome,
+            String.valueOf(Integer.parseInt(classe) - 1),
+            String.valueOf(Integer.parseInt(foco) - 1),
+            String.valueOf(Integer.parseInt(arma) - 1),
+            String.valueOf(Integer.parseInt(armadura) - 1)};
         return heroi;
-        
     }
     
     /**
      * Pede a informacao ao usuario se deseja adicionar mais herois ao time de herois
      * 
-     * @return retorna 0-sim 1-nao
+     * @return retorna 1-sim 2-nao
      */
-    private int confirmarSeTemMaisHerois(){
+    @Override
+    public int confirmarSeTemMaisHerois(){
         Scanner scan = new Scanner (System.in);
         System.out.println("Adicao do personagem no time dos herois encerrada, deseja adicionar mais personagens ao time de herois:\n"
-                + "0: Sim 1: Nao");
+                + "1-Sim 2-Nao");
         return scan.nextInt();  
     }
     
     /**
      * Le as informacoes informaçoes do golpe do heroi na ordem
-     * {tipo,nome do golpe}
+     * {nome,classe}
      * 
-     * @return vetor de Strings com as informaçoes do golpe do heroi
+     * @return Vetor de Strings com as informaçoes do golpe do heroi
      */
-    private String[] lerInformacoesParaCriarHeroiGolpe(){
+    @Override
+    public String[] lendoGolpe(){
         Scanner scan = new Scanner (System.in);
-        System.out.println("Qual o tipo de golpe:\n"
-                + "0: Fisico 1: Magico 2: Bola De Fogo 3: Meteoro 4: Lanca De Gelo 5: Nevasca");
-        String tipo = scan.next();
+        System.out.println("Qual a classe de golpe:\n"
+                + "1-Fisico 2-Magico 3-Bola De Fogo 4-Meteoro 5-Lanca De Gelo 6-Nevasca");
+        String classe = scan.next();
         System.out.println("Qual o nome do golpe:");
         String golpeNome = scan.next();
-        String[] inf = {tipo, golpeNome};
+        String[] inf = {classe, golpeNome};
         return inf;
-    }
-    
+    }    
+        
     /**
      * Pede a informacao ao usuario se deseja adicionar mais golpes ao heroi
      * 
-     * @return retorna 0-sim 1-nao
+     * @return retorna 1-sim 2-nao
      */
-    private int confirmarSeTemMaisGolpesDeHerois(){
+    @Override
+    public int confirmarSeTemMaisGolpesDeHerois(){
         Scanner scan = new Scanner (System.in);
         System.out.println("Deseja adicionar mais golpes:\n"
-                    + "0: Sim 1: Nao");
+                    + "1-Sim 2-Nao");
         return scan.nextInt();
-    }
-    
-    @Override
-    public void antesDeCriarTimeDeHerois(){
-        System.out.println("Primeiramente forme seu time para batalha:");
-        
-        int op;
-        do{
-            String[] heroiInf = lerInformacoesParaCriarHeroi();
-            String nome = heroiInf[0];
-            String classe = heroiInf[1];
-            int pontoForte = Integer.parseInt(heroiInf[2]);
-            int arma = Integer.parseInt(heroiInf[3]);
-            int armadura = Integer.parseInt(heroiInf[4]);
-            
-            rpg.adicionarHeroi(nome, classe, pontoForte, arma, armadura);
-            
-            //loop para adicionar os golpes do personagem
-            int opg;
-            do{
-                String[] golpeInf = lerInformacoesParaCriarHeroiGolpe();
-                int tipo = Integer.parseInt(golpeInf[0]);
-                String nomeGolpe = golpeInf[1];
-                if(tipo == 0){
-                    rpg.addGolpeFisicoNoHeroi(nome, nomeGolpe);
-                }else if(tipo == 1){
-                    rpg.addGolpeMagicoBasicoNoHeroi(nome, nomeGolpe);
-                }else if(tipo == 2){
-                    rpg.addGolpeMagicoBolaDeFogoNoHeroi(nome, nomeGolpe);
-                }else if(tipo == 3){
-                    rpg.addGolpeMagicoMeteoroNoHeroi(nome, nomeGolpe);
-                }else if(tipo == 4){
-                    rpg.addGolpeMagicoLancaDeGeloNoHeroi(nome, nomeGolpe);
-                }else if(tipo == 5){
-                    rpg.addGolpeMagicoNevascaNoHeroi(nome, nomeGolpe);
-                }
-                opg = confirmarSeTemMaisGolpesDeHerois();
-            }while(opg != 1);
-            op = confirmarSeTemMaisHerois();
-        }while(op != 1);
-        
-        /*para testes 
-        rpg.adicionarHeroi("nech", "Mago", 2, 0, 0);
-        rpg.addGolpeFisicoNoHeroi("nech", "fis");
-        rpg.addGolpeMagicoBasicoNoHeroi("nech", "beam");
-        rpg.addGolpeMagicoBolaDeFogoNoHeroi("nech", "fogo");
-        rpg.addGolpeMagicoMeteoroNoHeroi("nech", "meteoro");
-        rpg.addGolpeMagicoLancaDeGeloNoHeroi("nech", "lanca");*/
-    }
+    }    
     
     @Override
     public void antesDeIniciarRodadaDeBatalhas(){
@@ -240,56 +100,51 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     }
     
     @Override
-    public void antesDeApresentarInimigos(){
+    public void apresentandoInimigos(String[][] inf){
         System.out.println("\nInimigos:");
-        for(int i = 0; i < rpg.getNumInimigosNaBatalha(); i++){
+        for(String[] x : inf){
             System.out.println();
             System.out.println(
-                    "Nome: " + rpg.inimigoGetNome(i) +
-                    "\nClasse: " + rpg.inimigoGetClasse(i) +
-                    "\nPonto Forte: " + rpg.inimigoGetPontoForte(i) +
-                    "\nPontos de Saúde: " + rpg.inimigoGetSaude(i) +
-                    "\nDano Recebido/Dano Recebido Máximo: " + rpg.inimigoGetDanoRecebido(i) +
-                    "/" + rpg.inimigoGetDanoRecebidoMaximo(i) +
-                    "\nSituação de Vida: " + rpg.inimigoGetSituacaoDeVida(i) +
-                    "\nArma: " + rpg.inimigoGetArma(i) +
-                    "\nArmadura: " + rpg.inimigoGetArmadura(i) +
-                    "\nIniciativa: " + rpg.inimigoGetIniciativa(i)
+                    "Nome: " + x[0] +
+                    "\nClasse: " + x[1] +
+                    "\nFoco: " + x[2] +
+                    "\nNivel de Saúde: " + x[3] +
+                    "\nDano Recebido/Dano Recebido Máximo: " + x[4] +
+                    "/" + x[5] +
+                    "\nSituação de Vida: " + x[6] +
+                    "\nArma: " + x[7] +
+                    "\nArmadura: " + x[8] +
+                    "\nIniciativa: " + x[9]
             );
         }
     }
     
     @Override
-    public void antesDoInicioDoTurno(){
+    public void IniciandoTurnos(){
         System.out.println("\n- Inicio dos turnos -\n");
     }
     
     @Override
-    public void antesDeExibirInformacoesResumidasDeTodosOsLutadores(){
+    public void exibindoInformacoesResumidasDeTodosOsLutadores(String[][] inf){
         System.out.println("\nStatus:");
-        for(int k = 0; k < rpg.getNumLutadores(); k++){
+        int cont = 1;
+        for(String[] x : inf){
             System.out.println(); 
-            System.out.println(k + ")");
-            String fazendo = new String();
-            if(rpg.lutadorGetEstaDefendendo(k))
-                fazendo += " (defendendo)";
-            if(rpg.lutadorGetEstaEsquivando(k))
-                fazendo += " (esquivando)";
-            if(rpg.lutadorGetEstaCongelado(k))
-                fazendo += " (congelado)";
+            System.out.println(cont + ")");
             System.out.println(
-                    "Nome: " + rpg.lutadorGetNome(k) + fazendo + 
-                    "\nDano Recebido/Dano Recebido Máximo: " + rpg.lutadorGetDanoRecebido(k) +
-                    "/" + rpg.lutadorGetDanoRecebidoMaximo(k) +
-                    "\nSituação de Vida: " + rpg.lutadorGetSituacaoDeVida(k) +
-                    "\nSituação de Vida: " + rpg.lutadorGetPontosDeAcao(k)
+                    "Nome: " + x[2] + x[0] + x[1] +
+                    "\nDano Recebido/Dano Recebido Máximo: " + x[3] +
+                    "/" + x[4] +
+                    "\nSituação de Vida: " + x[5] +
+                    "\nPontos de Ação: " + x[6]
             );
+            cont++;
         }
         System.out.println();
     }
     
     @Override
-    public void antesDeExibirTurnoAtual(){
+    public void exibindoTurnoAtual(){
         System.out.println("[turno " + rpg.getTurno() + "]");
     }
     
@@ -299,27 +154,38 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     }
     
     @Override
-    public void antesDeExibirRelatorio(String relatorio){
+    public void exibindoRelatorio(String relatorio){
         System.out.println("Relatório: " + relatorio);
         System.out.println();
     }
     
     @Override
-    public void antesDoEncerramentoDaBatalha(){
+    public void encerramentoDaBatalha(){
         System.out.println("A batalha acabou!");
         System.out.println("Vencedores: " + rpg.getVencedores());
     }
     
     @Override
-    public void antesDaDerrota(){
+    public void exibirFim(){
         System.out.println("Pontuacao Final: " + rpg.getPontuacao());
     }
-  
     
-    @Override
-    public void antesDaVitoria(){
-        System.out.println("Pontuacao Atual: " + rpg.getPontuacao());
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * Verifica se o usuario deseja parar de jogar

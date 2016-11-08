@@ -519,6 +519,10 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         return armadura;
     }
     
+    public int getNivelDeSaude(){
+        return nivelDeSaude;
+    }
+    
     public int getIniciativa(){
         return iniciativa;
     }

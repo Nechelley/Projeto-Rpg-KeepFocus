@@ -6,27 +6,31 @@ package rpg;
  */
 public interface ObservadorJogo {
     
-    void antesDeCriarTimeDeHerois();
+    String[] lendoHeroi();
+    
+    int confirmarSeTemMaisHerois();
+    
+    String[] lendoGolpe();
+    
+    public int confirmarSeTemMaisGolpesDeHerois();
     
     void antesDeIniciarRodadaDeBatalhas();
     
-    void antesDeApresentarInimigos();
+    void apresentandoInimigos(String[][] inf);
     
-    void antesDoInicioDoTurno();
+    void IniciandoTurnos();
     
-    void antesDeExibirInformacoesResumidasDeTodosOsLutadores();
+    void exibindoInformacoesResumidasDeTodosOsLutadores(String[][] inf);
     
-    void antesDeExibirTurnoAtual();
+    void exibindoTurnoAtual();
     
     void antesDeExibirVezDoLutador(String lutadorNome);
     
-    void antesDeExibirRelatorio(String relatorio);
+    void exibindoRelatorio(String relatorio);
     
-    void antesDoEncerramentoDaBatalha();
+    void encerramentoDaBatalha();
     
-    void antesDaDerrota();
-    
-    void antesDaVitoria();
+    void exibirFim();
     
     int antesDeSair(boolean jaSalvou);
     
@@ -35,14 +39,4 @@ public interface ObservadorJogo {
     String escolhendoAlvo(int i);
     
     String escolhendoGolpe(int i);
-    
-    String lerNomeArquivo(String operacao);
-    
-    void arquivoInvalido(String mensagem,boolean criar);
-    
-    boolean decideCarregarHerois();
-    
-    public void personagemArquivoInvalido(int linha);
-    
-    boolean decideSalvarHerois();
 }

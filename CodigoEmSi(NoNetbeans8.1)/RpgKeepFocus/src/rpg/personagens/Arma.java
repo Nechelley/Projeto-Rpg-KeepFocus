@@ -20,6 +20,32 @@ public enum Arma {
     }
     
     /**
+     * Retorna a Arma passando um id
+     * 
+     * @param id int com o numero de identificacao da arma
+     * @return Arma procurada, ou null caso nao encontre
+     */
+    public static Arma getArmaPorId(int id){
+        if(id > 2 || id < 0)
+            return null;
+        Arma a = null;
+        switch (id) {
+            case 0:
+                a = Arma.PEQUENA;
+                break;
+            case 1:
+                a = Arma.MEDIA;
+                break;
+            case 2:
+                a = Arma.GRANDE;
+                break;
+            default:
+                break;
+        }
+        return a;
+    }
+    
+    /**
      * @return Int com o id da arma
      */
     public int getId(){

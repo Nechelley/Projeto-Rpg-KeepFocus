@@ -23,10 +23,10 @@ public enum Foco {
      * @param id int com o numero de identificacao do Foco
      * @return Foco procurado, ou null caso nao encontre
      */
-    public static Foco getPontoFortePorId(int id){
+    public static Foco getFocoPorId(int id){
         if(id > 4 || id < 0)
             return null;
-        Foco pf = Foco.CARISMA;
+        Foco pf = null;
         switch (id) {
             case 0:
                 pf = Foco.FORCA;
