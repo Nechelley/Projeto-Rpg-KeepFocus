@@ -14,11 +14,11 @@ public interface ObservadorJogo {
     
     public int confirmarSeTemMaisGolpesDeHerois();
     
-    void antesDeIniciarRodadaDeBatalhas();
+    void iniciandoRodadaDeBatalhas();
     
     void apresentandoInimigos(String[][] inf);
     
-    void IniciandoTurnos();
+    void iniciandoTurnos();
     
     void exibindoInformacoesResumidasDeTodosOsLutadores(String[][] inf);
     
@@ -32,11 +32,9 @@ public interface ObservadorJogo {
     
     void exibirFim();
     
-    int antesDeSair(boolean jaSalvou);
+    int escolhendoAcao(String[] inf);
     
-    int antesDeEscolherAcao(int i);
+    String escolhendoAlvo(String[] inf);
     
-    String escolhendoAlvo(int i);
-    
-    String escolhendoGolpe(int i);
+    String escolhendoGolpe(String[][] inf);
 }

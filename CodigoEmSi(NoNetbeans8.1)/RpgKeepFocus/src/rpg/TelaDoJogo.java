@@ -42,11 +42,17 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
                 + "1-Nada 2-Leve 3-Pesada");
         String armadura = scan.next();
         
-        String[] heroi = {nome,
+        /*String[] heroi = {nome,
             String.valueOf(Integer.parseInt(classe) - 1),
             String.valueOf(Integer.parseInt(foco) - 1),
             String.valueOf(Integer.parseInt(arma) - 1),
-            String.valueOf(Integer.parseInt(armadura) - 1)};
+            String.valueOf(Integer.parseInt(armadura) - 1)};*/
+        
+        String[] heroi = {nome,
+            "1",
+            "0",
+            "1",
+            "1"};
         return heroi;
     }
     
@@ -60,7 +66,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         Scanner scan = new Scanner (System.in);
         System.out.println("Adicao do personagem no time dos herois encerrada, deseja adicionar mais personagens ao time de herois:\n"
                 + "1-Sim 2-Nao");
-        return scan.nextInt();  
+        return /*scan.nextInt()*/2;  
     }
     
     /**
@@ -76,8 +82,8 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
                 + "1-Fisico 2-Magico 3-Bola De Fogo 4-Meteoro 5-Lanca De Gelo 6-Nevasca");
         String classe = scan.next();
         System.out.println("Qual o nome do golpe:");
-        String golpeNome = scan.next();
-        String[] inf = {classe, golpeNome};
+        String golpeNumero = scan.next();
+        String[] inf = {classe, golpeNumero};
         return inf;
     }    
         
@@ -95,7 +101,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     }    
     
     @Override
-    public void antesDeIniciarRodadaDeBatalhas(){
+    public void iniciandoRodadaDeBatalhas(){
         System.out.println("Inicia-se o jogo:");
     }
     
@@ -120,7 +126,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     }
     
     @Override
-    public void IniciandoTurnos(){
+    public void iniciandoTurnos(){
         System.out.println("\n- Inicio dos turnos -\n");
     }
     
@@ -170,49 +176,12 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         System.out.println("Pontuacao Final: " + rpg.getPontuacao());
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /**
-     * Verifica se o usuario deseja parar de jogar
-     * 
-     * @return retorna 0-sim 1-nao 
-     */
     @Override
-    public int antesDeSair(boolean jaSalvou){
-        if (jaSalvou)
-            System.out.println("Digite SAIR para encerrar o jogo ou aperte enter para continuar...");
-        else
-            System.out.println("Digite SAIR para encerrar, SALVAR para salvar o jogo ou aperte enter para continuar...");
-        Scanner scan = new Scanner (System.in);
-        String opcao = scan.nextLine();
-        if (opcao.equals("SAIR"))
-            return 0;
-        else if (opcao.equals("SALVAR") && !jaSalvou)
-            return 2;
-        return 1;
-    }
-     
-    @Override
-    public int antesDeEscolherAcao(int i){
-        String aux = "Escolha sua ação " + rpg.lutadorGetNome(i) + ", voce tem " + rpg.lutadorGetPontosDeAcao(i) + " pontos de acao restantes: 1-Atacar ";
-        if(!rpg.lutadorGetEstaDefendendo(i))
+    public int escolhendoAcao(String[] inf){
+        String aux = "Escolha sua ação " + inf[0] + ", voce tem " + inf[1] + " pontos de acao restantes: 1-Atacar ";
+        if(!inf[2].isEmpty())
             aux += "2-Defender ";
-        if(rpg.lutadorGetPontoForte(i).equals("Destreza") && !rpg.lutadorGetEstaEsquivando(i))
+        if(!inf[2].isEmpty())
             aux += "3-Esquivar ";
         aux += "5-Passar vez 6-Pedir para exibir status dos personagens";
         System.out.println(aux);
@@ -221,33 +190,35 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     }
     
     @Override
-    public String escolhendoAlvo(int i){
+    public String escolhendoAlvo(String[] inf){
         System.out.println();
-        System.out.println("Escolha quem atacar , diga o nome do seu alvo:");
+        System.out.println("Escolha quem atacar, escolha o numero do seu alvo:");
         System.out.println("A seguir estão suas possíveis escolhas:");
 
-        for(int j = 0; j < rpg.getNumPossiveisAlvos(i); j++){
-            System.out.println((j+1) + ")" + rpg.possivelAlvoLutadorGetNome(i,j));
+        int cont = 0;
+        for(String s : inf){
+            cont++;
+            System.out.println(cont + ")" + s);
         }
+        
         boolean nomeInvalido = true;
-        String alvoNome = "";
+        int alvoNumero = 0;
         while(nomeInvalido){
             System.out.println ();
-            System.out.print("Nome: ");
+            System.out.print("Numero: ");
             Scanner scan = new Scanner (System.in);
-            alvoNome = scan.nextLine();
+            alvoNumero = scan.nextInt();
 
-            // verifico se o nome é valido, ou seja, esta dentro das opcoes disponiveis
-            for(int j = 0; j < rpg.getNumPossiveisAlvos(i); j++){
-                if(alvoNome.equals(rpg.possivelAlvoLutadorGetNome(i,j))){
-                    nomeInvalido = false;
-                }
+            // verifico se o numero é valido, ou seja, esta dentro das opcoes disponiveis
+            if(alvoNumero < 1 || alvoNumero > cont){
+                nomeInvalido = false;
             }
             if(nomeInvalido){// se o nomeInvalido ainda estiver verdadeiro entao deu erro
                 System.out.println("Nome inválido, digite denovo.");
             }
         }
-        return alvoNome;
+        
+        return inf[alvoNumero-1];
     }
     
     /**
@@ -257,32 +228,32 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
      * @return String com o nome do golpe
      */
     @Override
-    public String escolhendoGolpe(int i){
+    public String escolhendoGolpe(String[][] inf){
         System.out.println();
-        System.out.println("Informe o golpe que sera executado:");
+        System.out.println("Informe o golpe(o numero do golpe) que sera executado:");
         System.out.println("A seguir estão suas possíveis escolhas:");
-
-        for(int j = 0; j < rpg.lutadorGetNumGolpes(i); j++){
-            System.out.println((j+1) + ")" + rpg.lutadorGetGolpe(i,j) + " (custa " + rpg.lutadorGetGolpeCusto(i,j) + " pontos de acao)");
+        
+        int cont = 0;
+        for(String[] s : inf){
+            cont++;
+            System.out.println(cont + ")" + s[0] + " (custa " + s[1] + " pontos de acao)");
         }
         boolean golpeInvalido = true;
-        String golpeNome = "";
+        int golpeNumero = 0;
         while(golpeInvalido){
             System.out.println ();
             System.out.print("Nome do golpe: ");
             Scanner scan = new Scanner (System.in);
-            golpeNome = scan.nextLine();
+            golpeNumero = scan.nextInt();
 
             // verifico se o golpe é valido, ou seja, esta dentro das opcoes disponiveis
-            for(int j = 0; j < rpg.lutadorGetNumGolpes(i); j++){
-                if(golpeNome.equals(rpg.lutadorGetGolpe(i,j))){
-                    golpeInvalido = false;
-                }
+            if(golpeNumero < 1 || golpeNumero > cont){
+                golpeInvalido = false;
             }
             if(golpeInvalido){// se o golpeInvalido ainda estiver verdadeiro entao deu erro
                 System.out.println("Golpe inválido, digite denovo.");
             }
         }
-        return golpeNome;
+        return inf[golpeNumero-1][0];
     }
 }

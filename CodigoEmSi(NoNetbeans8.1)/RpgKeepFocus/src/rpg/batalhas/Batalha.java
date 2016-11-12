@@ -147,26 +147,6 @@ public class Batalha implements Serializable{
     //QUESTAO DOS ALVOS
     
     /**
-     * Retorna a quantidade de alvos do Personagem p
-     * 
-     * @param p Personagem ao qual deseja-se saber a quantidade de alvos
-     * @return Int com a quantidade de possiveis alvo do personagem
-     */
-    public int getNumPossiveisDeAlvos(Personagem p){
-        int cont = 0;
-        
-        //para cada lutador na batalha
-        for(Personagem l : lutadores){
-            //verifico se é antagonico ao personagem, e se não esta morto
-            if(p.getEhHeroi() != l.getEhHeroi() && l.estaVivo()){
-                cont++;
-            }
-        }
-        
-        return cont;
-    }
-    
-    /**
      * Retorna uma lista com os possiveis personagens alvos de p
      * 
      * @param p Personagem que sera verificado seus possiveis alvos

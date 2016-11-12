@@ -16,6 +16,7 @@ import rpg.personagens.Goblin;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import rpg.golpes.Golpe;
 import rpg.personagens.Arma;
 import rpg.personagens.Armadura;
 import rpg.personagens.Classe;
@@ -79,18 +80,18 @@ public class Jogo implements Serializable{
         criandoTimeDeHerois();
         
         //inicio as rodadas de batalhas
-        tela.antesDeIniciarRodadaDeBatalhas();
+        tela.iniciandoRodadaDeBatalhas();
         situacaoDoJogo = SituacaoDoJogo.BATALHASCOMECARAM;
         
         while(situacaoDoJogo != SituacaoDoJogo.ACABOU){
             //comeca a batalha atual
             iniciarBatalha();
-            
+            System.out.println("chegeu");
             //Apresento os inimigos
             tela.apresentandoInimigos(matrizInimigos());
             
             //Inicio o turno atual
-            tela.IniciandoTurnos();
+            tela.iniciandoTurnos();
 
             // situaçao de todos os personagens
             tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
@@ -107,14 +108,14 @@ public class Jogo implements Serializable{
                 for(int i = 0; i < batalhaAtual.getNumLutadores() && flagDoTurno; i++){
                     String relatorio = new String();
                     
-                    Personagem lutadorAtual = batalhaAtual.getLutadores().get(i);
-                    String nomeLutador = lutadorAtual.getNome();
+                    Personagem lutador = batalhaAtual.getLutadores().get(i);
+                    String nomeLutador = lutador.getNome();
                     
                     tela.antesDeExibirVezDoLutador(nomeLutador);
                     
                     //verifico se o lutador esta em condicao de lutar
-                    if(lutadorAtual.getSituacaoDeVida() == SituacaoDeVida.INCONSCIENTE || 
-                            lutadorAtual.getSituacaoDeVida() == SituacaoDeVida.MORTO){
+                    if(lutador.getSituacaoDeVida() == SituacaoDeVida.INCONSCIENTE || 
+                            lutador.getSituacaoDeVida() == SituacaoDeVida.MORTO){
                         
                         relatorio = nomeLutador + " não esta em condição de executar qualquer ação.";
                         tela.exibindoRelatorio(relatorio);
@@ -122,8 +123,8 @@ public class Jogo implements Serializable{
                     }
                     
                     //neste ponto verifico se o lutador é um Inimigo e ativo a IA se necessario
-                    if(!lutadorAtual.getEhHeroi()){
-                        relatorio = executarIA(lutadorAtual);
+                    if(!lutador.getEhHeroi()){
+                        relatorio = executarIA(lutador);
                         tela.exibindoRelatorio(relatorio);
                         
                         if(batalhaAtual.verificaSeBatalhaAcabou()){
@@ -137,30 +138,24 @@ public class Jogo implements Serializable{
                     }
                     
                     //personagem escolhe a acao que deseja executar
-                    escolherAcao(i);
+                    escolherAcao(lutador);
                     
                     //escrever o que aconteceu, como se desenrolou a acao
-                    if(!getBatalhaEstaOcorrendo()){
+                    if(batalhaAtual.verificaSeBatalhaAcabou()){
                         flagDoTurno = false;
                         tela.encerramentoDaBatalha();
                         ganharPonto();
                         tela.exibirFim();
-                        int s = tela.antesDeSair(false);
-                        if(s == 0)
-                            encerrarJogo();
-                        else if (s == 2){
-                            salvarJogo();
-                            s = tela.antesDeSair(true);
-                            if(s == 0)
-                                encerrarJogo();
-                        }
+                        encerrarJogo();
+
                     }else{
-                        tela.exibindoInformacoesResumidasDeTodosOsLutadores();
+                        // situaçao de todos os personagens
+                        tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
                     }
                     
                 }//fecha loop do Turno
                 
-                if (getBatalhaEstaOcorrendo())
+                if (!batalhaAtual.verificaSeBatalhaAcabou())
                     tela.exibindoRelatorio(passarTurno());
             }//fecha loop da batalha
         }//fecha loop do jogo
@@ -257,23 +252,63 @@ public class Jogo implements Serializable{
 
         return inf;
     }
+    private String[] vetorParaEscolherAcao(Personagem lutador){
+        String[] inf = new String[4];
+        inf[0] = lutador.getNome();
+        inf[1] = String.valueOf(lutador.getPontosDeAcao());
+        if(!lutador.getEstaDefendendo())
+            inf[2] = "podeDefender";
+        else
+            inf[2] = "";
+        if(lutador.getFoco() == Foco.DESTREZA && !lutador.getEstaEsquivando())
+            inf[3] = "podeEsquivar";
+        else
+            inf[3] = "";
+        
+        return inf;
+    }
+    private String[] vetorParaEscolherAlvo(Personagem lutador){
+        List<Personagem> lista = batalhaAtual.getPossiveisAlvos(lutador);
+        String[] inf = new String[lista.size()];
+        int cont = 0;
+        for(Personagem p : lista){
+            inf[cont] = p.getNome();
+            cont++;
+        }
+        return inf;
+    }
+    private String[][] matrizParaEscolherGolpe(Personagem lutador){
+        List<Golpe> lista =lutador.getGolpes();
+        String[][] inf = new String[lista.size()][2];
+        int cont = 0;
+        for(Golpe g : lista){
+            inf[cont][0] = g.getNome();
+            inf[cont][1] = String.valueOf(g.getCustoDeAcao());
+            cont++;
+        }
+        return inf;
+    }
+    
+    
+    
+    
     /**
      * metodo para escolher o heroi escolher sua acao
-     * @param i pos do lutador
+     * @param lutador pos do lutador
      */
-    public void escolherAcao(int i){
+    public void escolherAcao(Personagem lutador){
         //loop do Personagem
         boolean flagPersonagem = true;//flag para a acao do personagem
         String relatorio = new String();
         while(flagPersonagem){
             //Personagem escolhe sua acao
-            int acao = tela.antesDeEscolherAcao(i);
+            int acao = tela.escolhendoAcao(vetorParaEscolherAcao(lutador));
             
             switch(acao){
                 // Ataque
                 case 1:
                     try{
-                        relatorio = atacar(i);
+                        relatorio = atacar(lutador);
                     }
                     catch(AcaoInvalidaException e){
                         relatorio = e.getMessage() + " " + e.getMotivo();
@@ -281,31 +316,25 @@ public class Jogo implements Serializable{
                     break;
                 // Defender
                 case 2:
-                    if(lutadorGetEstaDefendendo(i))
-                        relatorio = " Acão inválida!";
-                    else
-                        relatorio = defender(i);
+                    relatorio = defender(lutador);
                     break;
                 //Esquivar
                 case 3:
-                    if(lutadorGetPontoForte(i).equals("Destreza") && !lutadorGetEstaEsquivando(i))
-                        relatorio = esquivar(i);
-                    else
-                        relatorio = " Acão inválida!";
+                    relatorio = esquivar(lutador);
                     break;
                 case 5:
-                    relatorio = lutadorGetNome(i) + " encerrou sua vez.";
+                    relatorio = lutador.getNome() + " encerrou sua vez.";
                     flagPersonagem = false;//sai do loop de personagens
                     break;
                 case 6:
-                    tela.exibindoInformacoesResumidasDeTodosOsLutadores();
+                    tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
                     break;
                 default:
                     relatorio = " Acão inválida!"; 
             }//fecha switch(acao)
             tela.exibindoRelatorio(relatorio);
             
-            if(lutadorGetPontosDeAcao(i) == 0 || !getBatalhaEstaOcorrendo())
+            if(lutador.getPontosDeAcao() == 0 || batalhaAtual.verificaSeBatalhaAcabou())
                 flagPersonagem = false;//sai do loop de personagens
         }///fecha loop do Personagem
     }
@@ -316,8 +345,10 @@ public class Jogo implements Serializable{
      * @return relatorio de esquivar
      */
     public String esquivar(Personagem lutador){
-        getLutadorNaPosicao(i).esquivar();
-        return (lutadorGetNome(i) + " podera tentar esquivar do proximo ataque que receber.");
+        if(!(lutador.getFoco() == Foco.DESTREZA && !lutador.getEstaEsquivando()))
+            return " Acão inválida!";
+        lutador.esquivar();
+        return (lutador.getNome() + " podera tentar esquivar do proximo ataque que receber.");
     }
     
     /**
@@ -326,25 +357,27 @@ public class Jogo implements Serializable{
      * @return 
      */
     public String defender(Personagem lutador){
-        getLutadorNaPosicao(i).defender();
-        return (lutadorGetNome(i) + " podera se defender do proximo ataque que receber.");
+        if(lutador.getEstaDefendendo())
+            return " Acão inválida!";
+        lutador.defender();
+        return (lutador.getNome() + " podera se defender do proximo ataque que receber.");
     }
     
     public String atacar(Personagem lutador){
         //ler informações necessarias para executar a acao atacar
         
-        if(lutadorGetPontosDeAcao(i) == 0){
+        if(lutador.getPontosDeAcao() == 0){
             return "Voce nao possui pontos de acao suficiente para esse problema";
         }
         
         //escolhendo alvo
-        String alvoNome = tela.escolhendoAlvo(i);
+        String alvoNome = tela.escolhendoAlvo(vetorParaEscolherAlvo(lutador));
 
         //escolhendo o golpe
-        String golpeNome = tela.escolhendoGolpe(i);
+        String golpeNome = tela.escolhendoGolpe(matrizParaEscolherGolpe(lutador));
         
         //agora que ja foi recebido as informações necessarias, executa-se a ação atacar
-        return lutadorAtacaAlvo(i,alvoNome,golpeNome);
+        return lutadorAtacaAlvo(lutador,alvoNome,golpeNome);
     }
     
     
@@ -414,7 +447,7 @@ public class Jogo implements Serializable{
      * @return String dizendo quem venceu
      */
     public String getVencedores(){
-        if(getBatalhaEstaOcorrendo())
+        if(!batalhaAtual.verificaSeBatalhaAcabou())
             return "A Batalha ainda não acabou.";
         return batalhaAtual.getVencedores();
     }
@@ -527,93 +560,91 @@ public class Jogo implements Serializable{
     public String executarIA(Personagem lutador){
         Classe classeLutador = lutador.getClasse();
         SituacaoDeVida situacaoLutador = lutador.getSituacaoDeVida();
-        int alvoPos = 0;
+        Personagem alvo = null;
         
         if (situacaoLutador == SituacaoDeVida.SAUDAVEL) {
             //Define a estratégia de luta de acordo com o lutador
             switch(classeLutador){
-                case Classe.DRAGAO:
-                    alvoPos = definirAlvoMaisForte(lutador);
+                case DRAGAO:
+                    alvo = definirAlvoMaisForte(lutador);
                     break;
-                case Classe.OGRO:
-                case Classe.GOBLIN:
+                case OGRO:
+                case GOBLIN:
                     if (lutador.rodarDado() > 5) {
                         return defender(lutador);
                     } else {
-                        alvoPos = definirAlvoMaisFraco(lutador);
+                        alvo = definirAlvoMaisFraco(lutador);
                     }
                     break;
                 default:
                     if (lutador.rodarDado() > 4) {
                         return defender(lutador);
                     } else {
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     }
                     break;
             }
         } else if (situacaoLutador == SituacaoDeVida.ATORDOADO) {
             switch (classeLutador) {
-                case "Dragao":
+                case DRAGAO:
                     int chance = lutador.rodarDado();
                     if (chance == 6)
                         return defender(lutador);
                     else if (chance > 2)
-                        alvoPos = definirAlvoMaisForte(lutador);
+                        alvo = definirAlvoMaisForte(lutador);
                     else
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     break;
-                case "Ogro":
-                case "Goblin":
+                case OGRO:
+                case GOBLIN:
                     if (lutador.rodarDado() > 3)
-                        alvoPos = definirAlvoMaisForte(lutador);
+                        alvo = definirAlvoMaisForte(lutador);
                     else
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     break;
                 default:
                     if (lutador.rodarDado() > 4) {
                         return defender(lutador);
                     } else {
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     }
                     break;
             }
         } else {
             switch (classeLutador) {
-                case "Dragao":
+                case DRAGAO:
                     if (lutador.rodarDado() > 4)
-                        alvoPos = definirAlvoMaisForte(lutador);
+                        alvo = definirAlvoMaisForte(lutador);
                     else
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     break;
-                case "Ogro":
+                case OGRO:
                     if (lutador.rodarDado() == 6)
-                        alvoPos = definirAlvoMaisForte(lutador);
+                        alvo = definirAlvoMaisForte(lutador);
                     else
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     break;
-                case "Goblin":
+                case GOBLIN:
                     int chance = lutador.rodarDado();
                     if (chance == 6)
-                        alvoPos = definirAlvoMaisForte(lutador);
+                        alvo = definirAlvoMaisForte(lutador);
                     else if (chance > 3)
                         return defender(lutador);
                     else
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     break;
                 default:
                     if (lutador.rodarDado() > 2) {
                         return defender(lutador);
                     } else {
-                        alvoPos = definirAlvoAleatorio(lutador);
+                        alvo = definirAlvoAleatorio(lutador);
                     }
                     break;
             }
         }
         
         Random aleatorio = new Random();
-        int golpe = aleatorio.nextInt(lutador.getNumGolpes());
-        String alvoNome = possivelAlvoLutadorGetNome(pos,alvoPos);
-        return lutadorAtacaAlvo(pos,alvoNome,lutador.getGolpe(golpe));
+        return lutadorAtacaAlvo(lutador,alvo.getNome(),definirGolpeNoAlvo(lutador).getNome());
     }
     
     /**
@@ -622,10 +653,10 @@ public class Jogo implements Serializable{
      * @param lutador lutador na lista de lutadores da batalha
      * @return int com a posicao do alvo a ser atacado
      */
-    private int definirAlvoAleatorio(Personagem lutador) {
-        //meu valores para j variam de 0 ate getNumPossiveisAlvos(i)
+    private Personagem definirAlvoAleatorio(Personagem lutador) {
+        List<Personagem> lista = batalhaAtual.getPossiveisAlvos(lutador);
         Random random = new Random();
-        return random.nextInt(getNumPossiveisAlvos(pos));
+        return lista.get(random.nextInt(lista.size()));
     }
     /**
      * Define o alvo a ser atacado como o alvo mais fraco.
@@ -633,28 +664,26 @@ public class Jogo implements Serializable{
      * @param lutador lutador na lista de lutadores da batalha
      * @return int com a posicao do alvo a ser atacado
      */
-    private int definirAlvoMaisFraco(Personagem lutador) {
-        Personagem atacante = getLutadorNaPosicao(pos);
-        
+    private Personagem definirAlvoMaisFraco(Personagem lutador) {
         //Faz uma lista de todos os alvos possíveis do atacante
-        List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(atacante);
+        List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(lutador);
         
         //Percorre a lista verificando qual é o alvo com maior dano
         int maiorDano = alvos.get(0).getDanoRecebido();
-        int posAlvo = 0;
-        for (int i = 1;i < alvos.size();i++) {
-            String situacaoAlvo = alvos.get(i).getSituacaoDeVida();
+        Personagem alvo = null;
+        for(Personagem p : alvos){
+            SituacaoDeVida situacaoAlvo = p.getSituacaoDeVida();
             
             //Verifica se o dano do alvo é menor e se o alvo não está incapaz
-            if (maiorDano < alvos.get(i).getDanoRecebido() &&
-                    !situacaoAlvo.equals("Inconsciente") &&
-                    !situacaoAlvo.equals("Morto")) {
-                maiorDano = alvos.get(i).getDanoRecebido();
-                posAlvo = i;
+            if (maiorDano < p.getDanoRecebido() &&
+                    !(situacaoAlvo == SituacaoDeVida.INCONSCIENTE) &&
+                    !(situacaoAlvo == SituacaoDeVida.MORTO)) {
+                maiorDano = p.getDanoRecebido();
+                alvo = p;
             }
         }
         
-        return posAlvo;
+        return alvo;
     }    
     /**
      * Define o alvo a ser atacado como o alvo mais fraco.
@@ -662,42 +691,29 @@ public class Jogo implements Serializable{
      * @param lutador lutador na lista de lutadores da batalha
      * @return int com a posicao do alvo a ser atacado
      */
-    private int definirAlvoMaisForte(Personagem lutador) {
-        Personagem atacante = getLutadorNaPosicao(pos);
-        
+    private Personagem definirAlvoMaisForte(Personagem lutador) {
         //Faz uma lista de todos os alvos possíveis do atacante
-        List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(atacante);
+        List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(lutador);
         
         //Percorre a lista verificando qual é o alvo com menor dano
         int menorDano = alvos.get(0).getDanoRecebido();
-        int posAlvo = 0;
-        for (int i = 1;i < alvos.size();i++) {
-            if (menorDano > alvos.get(i).getDanoRecebido()) {
-                menorDano = alvos.get(i).getDanoRecebido();
-                posAlvo = i;
+        Personagem alvo = null;
+        for (Personagem p : alvos) {
+            if (menorDano > p.getDanoRecebido()) {
+                menorDano = p.getDanoRecebido();
+                alvo = p;
             }
         }
         
-        return posAlvo;
+        return alvo;
+    }
+    private Golpe definirGolpeNoAlvo(Personagem lutador){
+        List<Golpe> lista = lutador.getGolpes();
+        Random random = new Random();
+        return lista.get(random.nextInt(lista.size()));
     }
     
     
-    
-    /**
-     * Retorna o nome do possivel alvo de um atacante
-     * 
-     * @param posDoAtacante int com a posicao do lutador atacante na lista de todos os lutadores
-     * @param posDoAlvo int com a posaicao do alvo na lista de alvos
-     * @return String com o nome do possivel alvo
-     */
-    public String possivelAlvoLutadorGetNome(int posDoAtacante, int posDoAlvo){
-        Personagem atacante = getLutadorNaPosicao(posDoAtacante);
-        
-        List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(atacante);
-        if(posDoAlvo < 0 || posDoAlvo > alvos.size() - 1)
-            throw new IndexOutOfBoundsException("Posição " + posDoAlvo + " não existe em alvos.");
-        return alvos.get(posDoAlvo).getNome();
-    }
     
     /**
      * Aciona a acao atacar do lutador na posicao posAtacante e seleciona como alvo
@@ -708,8 +724,7 @@ public class Jogo implements Serializable{
      * @param golpe String com o nome do golpe sendo executado
      * @return String dizendo oque aconteceu no ataque
      */
-    public String lutadorAtacaAlvo(int posAtacante, String nomeAlvo, String golpe){
-        Personagem atacante = getLutadorNaPosicao(posAtacante);
+    public String lutadorAtacaAlvo(Personagem atacante, String nomeAlvo, String golpe){
         
         List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(atacante);
         
@@ -719,188 +734,15 @@ public class Jogo implements Serializable{
                 alvo = alvos.get(i);
         }
         
-        return atacante.atacar(alvo,golpe);
+        return atacante.atacar(alvo,atacante.getGolpePeloNome(golpe));
     }
     
     
     
     
     
+
     
-    
-    //GETS DE QUANTIDADE
-    
-    /**
-     * Retorna a quantidade de alvos do lutador na posição i
-     * 
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return int com a quantidade de possiveis alvo do lutador
-     */
-    public int getNumPossiveisAlvos(int pos){
-        return batalhaAtual.getNumPossiveisDeAlvos(getLutadorNaPosicao(pos));
-    }
-    
-    
-    
-    
-    //GETS DAS INFORMACOES DOS LUTADORES
-    
-    /**
-     * Metodo auxiliar que dada uma posicao ele retorna o lutador daquela posicao 
-     * na lista de todos os lutadores
-     * 
-     * @param pos int com a posicao do lutador
-     * @return Personagem que é o lutador
-     */
-    private Personagem getLutadorNaPosicao(int pos){
-        List<Personagem> list = batalhaAtual.getLutadores();
-        if(pos < 0 || pos > list.size() - 1)
-            throw new IndexOutOfBoundsException("Posição " + pos + " não existe nos lutadores.");
-        return list.get(pos);
-    }
-    
-    /**
-     * Retorna o nome do lutador
-     * 
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return String com o nome do lutador
-     */
-    public String lutadorGetNome(int pos){
-        return getLutadorNaPosicao(pos).getNome();
-    }
-    
-    /**
-     * Retorna o dano recebido do lutador
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return int com o dano recebido
-     */
-    public int lutadorGetDanoRecebido(int pos){
-       return getLutadorNaPosicao(pos).getDanoRecebido();
-    }
-    
-    /**
-     * Retorna o dano recebido maximo do lutador
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return int com o dano recebido maximo
-     */
-    public int lutadorGetDanoRecebidoMaximo(int pos){
-        return getLutadorNaPosicao(pos).getDanoRecebidoMaximo();
-    }
-    
-    /**
-     * Retorna a situacao de vida do lutador
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return String com a situacao de vida 
-     */
-    public String lutadorGetSituacaoDeVida(int pos){
-        return getLutadorNaPosicao(pos).getSituacaoDeVida();
-    }
-    
-    /**
-     * Retorna se o jogador esta ou nao em condicao de executar ações
-     * 
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return boolean onde (true)-esta em condicao ou (false)-nao esta e condicao
-     */
-    public boolean lutadorEstaEmCondicao(int pos){
-        Personagem p = getLutadorNaPosicao(pos);
-        if(p.getSituacaoDeVida().equals("Inconsciente") || p.getSituacaoDeVida().equals("Morto")){
-            return false;
-        }
-        return true;
-    }
-    
-    /**
-     * Retorna se um lutador na posicao pos é ou nao heroi
-     * 
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return boolean onde (true)-se é heroi ou (false)-caso seja inimigo
-     */
-    public boolean lutadorGetEhHeroi(int pos){
-        return getLutadorNaPosicao(pos).getEhHeroi();
-    }
-    
-    /**
-     * Retorna a quantidade de pontos de acao de um lutador
-     * 
-     * @param pos int com a posicao do lutador na lista de lutadores da batalha
-     * @return int com a quantidade de pontos de acao
-     */
-    public int lutadorGetPontosDeAcao(int pos){
-        return getLutadorNaPosicao(pos).getPontosDeAcao();
-    }
-    
-    /**
-     * Retorna quantos golpes tem um lutador na posicao pos
-     * 
-     * @param pos int com a posicao
-     * @return int com num de golpes
-     */
-    public int lutadorGetNumGolpes(int pos){
-        return getLutadorNaPosicao(pos).getNumGolpes();
-    }
-    
-    /**
-     * Retorna um golpe de um personagem
-     * 
-     * @param pos int com a posicao do personagem na lista
-     * @param posG int com a posicao do golpes procurado
-     * @return String com o nome do golpe
-     */
-    public String lutadorGetGolpe(int pos, int posG){
-        return getLutadorNaPosicao(pos).getGolpe(posG);
-    }
-    
-    /**
-     * Retorna o custo do golpe de um personagem
-     * 
-     * @param pos int com a posicao do personagem na lista
-     * @param posG int com a posicao do golpes procurado
-     * @return int com o custo do golpe
-     */
-    public int lutadorGetGolpeCusto(int pos, int posG){
-        return getLutadorNaPosicao(pos).getGolpeCusto(posG);
-    }
-    
-    /**
-     * Retorna se o lutador esta esquivando
-     * 
-     * @param pos int com a posicao do personagem na lista
-     * @return Retorna se o lutador esta esquivando
-     */
-    public boolean lutadorGetEstaEsquivando(int pos){
-        return getLutadorNaPosicao(pos).getEstaEsquivando();
-    }
-    
-    /**
-     * Retorna se o lutador esta defendendo
-     * 
-     * @param pos int com a posicao do personagem na lista
-     * @return Retorna se o lutador esta defendendo
-     */
-    public boolean lutadorGetEstaDefendendo(int pos){
-        return getLutadorNaPosicao(pos).getEstaDefendendo();
-    }
-    
-    /**
-     * Retorna se o lutador esta congelado
-     * 
-     * @param pos int com a posicao do personagem na lista
-     * @return Retorna se o lutador esta congelado
-     */
-    public boolean lutadorGetEstaCongelado(int pos){
-        return getLutadorNaPosicao(pos).getEstaCongelado();
-    }
-    
-    /**
-     * Retorna o ponto forte do lutador
-     * 
-     * @param pos int com a posicao do personagem na lista
-     * @return Retorna o ponto forte do lutador
-     */
-    public String lutadorGetPontoForte(int pos){
-        return getLutadorNaPosicao(pos).getPontoForte();
-    }
     
     //TURNOS
     
@@ -914,7 +756,6 @@ public class Jogo implements Serializable{
         String relatorio = "Aconteceu na passagem de turnos:\n";
         for(Personagem l : list){
             l.resetarPontosDeAcao();
-            relatorio += l.receberXBuffs();
         }
         batalhaAtual.passarTurno();
         return relatorio;

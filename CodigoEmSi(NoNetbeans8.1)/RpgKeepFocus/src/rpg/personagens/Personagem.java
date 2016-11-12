@@ -385,6 +385,18 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
     public abstract void diminuiNumInstancias ();
     
     /**
+     * Diz se uma classe é ou nao magica
+     * 
+     * @return True se sim, false se nao
+     */
+    public boolean verificaClasseMagica() {
+        return (classe == Classe.MAGO ||
+                classe == Classe.CLERIGO||
+                classe == Classe.CULTISTA ||
+                classe == Classe.DRAGAO);
+    }
+    
+    /**
      * Adiciona um golpe ja existente ao arsenal de um personagem
      * 
      * @param g Golpe a ser adicionado
@@ -404,18 +416,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         if(possueGolpe(nome))
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeFisico(nome,arma));
-    }
-    
-    /**
-     * Diz se uma classe é ou nao magica
-     * 
-     * @return True se sim, false se nao
-     */
-    public boolean verificaClasseMagica() {
-        return (classe == Classe.MAGO ||
-                classe == Classe.CLERIGO||
-                classe == Classe.CULTISTA ||
-                classe == Classe.DRAGAO);
     }
     
     /**
@@ -525,6 +525,18 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
     
     public int getIniciativa(){
         return iniciativa;
+    }
+    
+    public List<Golpe> getGolpes(){
+        return golpes;
+    }
+    
+    public Golpe getGolpePeloNome(String g){
+        for(Golpe gg : golpes){
+            if(gg.getNome().equals(g))
+                return gg;
+        }
+        return null;
     }
     
     public int getPontosDeAcao(){
