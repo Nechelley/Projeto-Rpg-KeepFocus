@@ -1,42 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rpg.golpes;
 
-import rpg.xbuff.XBuff;
-
 /**
- *
- * @author neche
+ * Golpe do tipo ataque magico, coma atributo gelo
+ * dano = (d6/6 + 4)
+ * chance = 6
+ * custo = 2
+ * 
+ * @author Nechelley Alves
  */
 public class GolpeMagicoNevasca extends GolpeMagico{
-    private XBuff congelamento;
     /**
      * Construtor onde defino como o golpe sera executado.
-     * @param nome nome do golpe
+     * 
+     * @param nome Nome do golpe
      */
     public GolpeMagicoNevasca(String nome){
         super(nome);
-        setDano(0);
+        setDanoBase(4);
         setChanceDeAcerto(6);
         setCustoDeAcao(2);
-        congelamento = new XBuff("congelamento",0, 1, 2);
-    }
-
-    @Override
-    public void setDanoEmBatalha(int valorDoDado) {
-        setDano(valorDoDado/6);
-    }
-
-    @Override
-    public XBuff getXBuff() {
-        return congelamento;
     }
     
+    /**
+     * Calculo do dano do ataque
+     * 
+     * @param valorDoDado Valor do dado jogado
+     */
     @Override
-    public String getTipo() {
-        return "nevasca";
+    public void setDanoEmBatalha(int valorDoDado) {
+        setDano(getDanoBase() + Math.round(valorDoDado/6));
     }
 }

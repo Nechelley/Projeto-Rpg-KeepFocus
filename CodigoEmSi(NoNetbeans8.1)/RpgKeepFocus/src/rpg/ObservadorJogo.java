@@ -6,43 +6,35 @@ package rpg;
  */
 public interface ObservadorJogo {
     
-    void antesDeCriarTimeDeHerois();
+    String[] lendoHeroi();
     
-    void antesDeIniciarRodadaDeBatalhas();
+    int confirmarSeTemMaisHerois();
     
-    void antesDeApresentarInimigos();
+    String[] lendoGolpe();
     
-    void antesDoInicioDoTurno();
+    public int confirmarSeTemMaisGolpesDeHerois();
     
-    void antesDeExibirInformacoesResumidasDeTodosOsLutadores();
+    void iniciandoRodadaDeBatalhas();
     
-    void antesDeExibirTurnoAtual();
+    void apresentandoInimigos(String[][] inf);
+    
+    void iniciandoTurnos();
+    
+    void exibindoInformacoesResumidasDeTodosOsLutadores(String[][] inf);
+    
+    void exibindoTurnoAtual(int turno);
     
     void antesDeExibirVezDoLutador(String lutadorNome);
     
-    void antesDeExibirRelatorio(String relatorio);
+    void exibindoRelatorio(String relatorio);
     
-    void antesDoEncerramentoDaBatalha();
+    void encerramentoDaBatalha(String vencedores);
     
-    void antesDaDerrota();
+    void exibirFim(int pontuacao);
     
-    void antesDaVitoria();
+    int escolhendoAcao(String[] inf);
     
-    int antesDeSair(boolean jaSalvou);
+    String escolhendoAlvo(String[] inf);
     
-    int antesDeEscolherAcao(int i);
-    
-    String escolhendoAlvo(int i);
-    
-    String escolhendoGolpe(int i);
-    
-    String lerNomeArquivo(String operacao);
-    
-    void arquivoInvalido(String mensagem,boolean criar);
-    
-    boolean decideCarregarHerois();
-    
-    public void personagemArquivoInvalido(int linha);
-    
-    boolean decideSalvarHerois();
+    String escolhendoGolpe(String[][] inf);
 }

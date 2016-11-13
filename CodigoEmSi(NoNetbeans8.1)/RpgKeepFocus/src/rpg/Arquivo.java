@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rpg;
 
+import rpg.excecoes.InfInvalidoException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,27 +15,28 @@ import java.util.ArrayList;
 
 /**
  *
- * @author paulo
+ * @author Nechelley Alves, Paulo
  */
 public class Arquivo implements Serializable {
     
-    String nome;
+    private final String nome;
     
     /**
      * Construtor da classe Arquivo.
      * Recebe uma String com o nome do arquivo a ser trabalhado pela instância
-     * @param nome 
+     * 
+     * @param nome Nome do arquivo
      */
     public Arquivo (String nome) {
         this.nome = nome;
     }
     
     /**
-     * Carrega os dados do banco de dados.
+     * Carrega os dados do arquivo
      * 
      * @return Jogo carregado do arquivo.
      */
-    public Jogo carregar() {
+    public Jogo carregarJogo() {
         Jogo jogo = null;
         try {
             FileInputStream f_in = new FileInputStream(nome);
@@ -53,11 +50,11 @@ public class Arquivo implements Serializable {
     }
     
     /**
-     * Salva os dados do banco de dados no arquivo especificado no construtor
-     * da classe.
-     * @param jogo: Jogo a ser salvo
+     * Salva os dados do jogo no arquivo.
+     * 
+     * @param jogo Jogo a ser salvo
      */
-    public void salvar(Jogo jogo) {
+    public void salvarJogo(Jogo jogo) {
         try {
             FileOutputStream f_out = new FileOutputStream(nome);
             ObjectOutputStream obj_out = new ObjectOutputStream(f_out);
@@ -71,6 +68,7 @@ public class Arquivo implements Serializable {
     
     /**
      * Testa para ver se o arquivo é possível de ser criado.
+     * 
      * @throws IOException 
      */
     public void testarArquivo() throws IOException {
@@ -87,6 +85,7 @@ public class Arquivo implements Serializable {
     
     /**
      * Carrega uma lista de heróis de um arquivo texto
+     * 
      * @return Lista de Strings com os heróis lidos. Cada posição possui dados de um herói separados por ponto e virgula ";"
      * @throws FileNotFoundException Exceção quando o arquivo não foi encontrado
      * @throws IOException Exceção com erro de leitura do arquivo
@@ -111,6 +110,7 @@ public class Arquivo implements Serializable {
     
     /**
      * Salva uma string de heróis no arquivo texto
+     * 
      * @param lista String com os heróis. Cada dado de herói separado por ponto e virgula ";" e cada herói separado por quebra de linha "\n"
      * @throws IOException Exceção com erro de escrita do arquivo
      */

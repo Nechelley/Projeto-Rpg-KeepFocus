@@ -1,15 +1,14 @@
 package rpg.personagens;
 
-import rpg.xbuff.XBuff;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import rpg.AcaoInvalidaException;
+import rpg.excecoes.AcaoInvalidaException;
 import rpg.Dado;
 import rpg.golpes.Golpe;
 import rpg.golpes.GolpeFisico;
-import rpg.InfInvalidoException;
-import rpg.InfJaExistenteException;
+import rpg.excecoes.InfInvalidoException;
+import rpg.excecoes.InfJaExistenteException;
 import rpg.golpes.GolpeMagicoBolaDeFogo;
 import rpg.golpes.GolpeMagicoBasico;
 import rpg.golpes.GolpeMagicoLancaDeGelo;
@@ -17,54 +16,51 @@ import rpg.golpes.GolpeMagicoMeteoro;
 import rpg.golpes.GolpeMagicoNevasca;
 
 /**
- * Classe que representa um personagem, tendo suas caracteristicas(id, nome, classe, ponto forte, 
- pontos de saude, dano recebido, dano recebido maximo, situacao da vida, arma, armadura, iniciativa, 
- dado proprio e se é ou nao heroi), alem das ações que o mesmo pode executar durante o jogo.
+ * Classe que representa um personagem, tendo suas caracteristicas:
+ * (id, nome, classe, foco, pontos de saude, dano recebido, dano recebido maximo, 
+ *  situacao da vida, arma, armadura, iniciativa e dado proprio),
+ * alem das ações que o mesmo pode executar durante o jogo.
  * 
  * @author Nechelley Alves
  */
 public abstract class Personagem implements Comparable<Personagem>, Serializable{
     //String com o nome do personagem
     private final String nome;
-    //String com a classe do personagem esta podendo ser mago, clerigo, guerreiro.
-    private final String classe;
-    //ponto forte que pode ser: 
-    //0-Força 1-Destreza 2-Constituição 3-Carisma
-    private final int pontoForte;
-    //representa quantos pontos o personagem tem para gastar com acoes
-    private int pontosDeAcao;
-    //diz se o personagem pode estar esquivando ou nao de um golpe
-    private boolean estaEsquivando;
-    //diz se o personagem pode estar defendendo ou nao um golpe
-    private boolean estaDefendendo;
-    //diz se o personagem esta congelado
-    private boolean estaCongelado;
-    //quantos pontos o personagem tem de saude
-    private int pontoSaude;
-    //quantidade de dano recebido pelo personagem em certo momento
-    private int danoRecebido;
+    //classe do personagem esta podendo ser:
+    //mago ou clerigo ou guerreiro.
+    private final Classe classe;
+    //foco que pode ser: 
+    //Força ou Destreza ou Constituição ou Carisma
+    private final Foco foco;
+    //nivel de saudedo personagem, sera usado para calculo de quanto de dano o personagem aguenta
+    private final int nivelDeSaude;
+    //tipo de arma que o personagem usa: 
+    //Pequena ou Média ou Grande
+    private final Arma arma;
+    //tipo de armadura que o personagem usa:
+    //Nada ou Leve ou Pesada
+    private final Armadura armadura;
+    //dado proprio do personagem
+    private final Dado d6;
+    
     //quantidade dano necessario para que o personagem morra
     private final int danoRecebidoMaximo;
+    //quantidade de dano recebido pelo personagem em certo momento
+    private int danoRecebido;
     //situação do estado de vida do personagem com base no danoRecebido podendo ser: 
-    //0-Saudável     1-Atordoado     2-Desesperado     3-Inconsciente   4-Morto
-    //20% dano       40% dano        60% dano          99% dano         100% dano
-    private int situacaoDeVida;
+    //Saudável ou Atordoado ou Desesperado ou Inconsciente ou Morto
+    private SituacaoDeVida situacaoDeVida;
     
-    //quantos pontos o personagem tem de arma podendo ser: 0-Pequena 1-Média 2-Grande
-    private final int arma;
-    //quantos pontos o personagem tem de armadura
-    private final int armadura;
     //quantos pontos o personagem tem de iniciativa, que determina quem começa a ação em uma batalha
     private int iniciativa;
+    //representa quantos pontos o personagem tem para gastar com acoes
+    private int pontosDeAcao;
+    //lista que diz quais os estados do personagem em dado momento
+    private List<Estado> estados;
     //lista com os golpes que o personagem pode usar
     private List<Golpe> golpes;
-    //lista de XBuffs
-    private List<XBuff> xbuffs;
-    //dado proprio do personagem
-    private Dado d6;
     
     
-     
     //CONSTRUTORES
     
     /**
@@ -72,53 +68,50 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      * 
      * @param nome String com o nome do personagem
      * @param classe String com qual sera a classe do personagem
-     * @param pontoForte Int com qual sera o ponto forte do personagem
-     * @param arma Int dizendo qual o tipo de arma o personagem usara
-     * @param armadura Int com qual o tipo de armadura o personagem usara
+     * @param foco Foco com qual sera o ponto forte do personagem
+     * @param arma Arma dizendo qual o tipo de arma o personagem usara
+     * @param armadura Armadura com qual o tipo de armadura o personagem usara
      */
-    public Personagem(String nome, String classe, int pontoForte, int arma, int armadura){
+    public Personagem(String nome, Classe classe, Foco foco, Arma arma, Armadura armadura){
             if(!verificaNome(nome))
                 throw new InfInvalidoException("Nome",nome);
             this.nome = nome;
-            if(!verificaClasse(classe))
-                throw new InfInvalidoException("Classe",classe);
+            if(classe == null)
+                throw new InfInvalidoException("Classe","NULL");
             this.classe = classe;
-            if(!(pontoForte >= 0 && pontoForte <= 3))
-                throw new InfInvalidoException("Ponto forte",Integer.toString(pontoForte));
-            this.pontoForte = pontoForte;
+            if(foco == null)
+                throw new InfInvalidoException("Foco","NULL");
+            this.foco = foco;
             
-            calculaPontoSaude();
+            this.nivelDeSaude = calculaNivelDeSaude();
             
             danoRecebido = 0;
-            danoRecebidoMaximo = 5*pontoSaude;
-            situacaoDeVida = 0;
-                    
-            if(!(arma >= 0 && arma <= 2))
-                throw new InfInvalidoException("Arma",Integer.toString(arma));
+            danoRecebidoMaximo = nivelDeSaude*5;
+            this.situacaoDeVida = SituacaoDeVida.SAUDAVEL;
+            
+            if(arma == null)
+                throw new InfInvalidoException("Arma","NULL");
             this.arma = arma;
-            if(!(armadura >= 0 && armadura <= 2))
-                throw new InfInvalidoException("Armadura",Integer.toString(armadura));
+            if(armadura == null)
+                throw new InfInvalidoException("Armadura","NULL");
             this.armadura = armadura;
             
             iniciativa = 0;
             
+            estados = new ArrayList<Estado>();
             golpes = new ArrayList<Golpe>();
-            xbuffs = new ArrayList<XBuff>();
             
             d6 = new Dado(6);
             
             pontosDeAcao = 2;
-            estaEsquivando = false;
-            estaDefendendo = false;
-            estaCongelado = false;
     }
     /**
      * Verifica se um nome é valido, ou seja, composto de apenas letras(maiusculas e minusculas), numeros(0-9) e spaces
      * 
      * @param nome String com o nome a ser verificado
-     * @return true se o nome for valido, false caso contrario
+     * @return True se o nome for valido, false caso contrario
      */
-    private boolean verificaNome(String nome){
+    private static boolean verificaNome(String nome){
         if(nome.isEmpty())
             return false;
         String valoresValidos[] = {
@@ -141,55 +134,24 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         return true;
     }
     /**
-     * Verifica se uma classe é valida, ou seja, ela é Guerreiro, Mago ou Clerigo, ou uma das dos inimigos
-     * 
-     * @param nome String com a classe a ser verificada
-     * @return true se a classe for valida, false caso contrario
-     */
-    private boolean verificaClasse(String classe){
-        if(classe.isEmpty())
-            return false;
-        String valoresValidos[] = new String[8];
-        if(getEhHeroi()){
-            valoresValidos[0] = "Guerreiro";
-            valoresValidos[1] = "Mago";
-            valoresValidos[2] = "Clerigo";
-        }
-        else{
-            valoresValidos[0] = "Zumbi";
-            valoresValidos[1] = "Ogro";
-            valoresValidos[2] = "Esqueleto";
-            valoresValidos[3] = "Dragao";
-            valoresValidos[4] = "Goblin";
-            valoresValidos[5] = "Cultista";
-        }
-        boolean palavraValida = false;
-        for(String v : valoresValidos){
-            if(classe.equals(v)){
-                palavraValida = true;
-                break;
-            }
-
-        }
-        return palavraValida;
-    }
-    /**
      * Define os pontos de saúde do personagem de acordo com a classe e ponto forte.
+     * 
+     * @return Qual sera o nivel de saude do personagem
      */
-    private void calculaPontoSaude() {
-        //Pontos de saúde padrão para as classes não listadas
-        pontoSaude = 4;
+    private int calculaNivelDeSaude() {
+        //Nivel de saude padrão para as classes não listadas
+        int ns = 4;
         
-        if (classe.equals("Dragao"))
-                pontoSaude = 4;
-        if(classe.equals("Guerreiro") || classe.equals("Ogro"))
-            pontoSaude = 3;
-        else if (classe.equals("Goblin") || classe.equals("Cultista") ||
-                classe.equals("Zumbi"))
-            pontoSaude = 2;
+        if(classe == Classe.GUERREIRO || classe == Classe.OGRO)
+            ns = 3;
+        else if (classe == Classe.GOBLIN || classe == Classe.CULTISTA ||
+                classe == Classe.ZUMBI)
+            ns = 2;
         
-        if(pontoForte == 2)//isso é para o caso do personagem tiver ponto forte em constituição
-            pontoSaude++;
+        if(foco == Foco.CONSTITUICAO)//isso é para o caso do personagem tiver ponto forte em constituição
+            ns++;
+        
+        return ns;
     }
     
     /**
@@ -200,8 +162,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
     public Personagem(Personagem p){
         this.nome = p.nome;
         this.classe = p.classe;
-        this.pontoForte = p.pontoForte;
-        this.pontoSaude = p.pontoSaude;
+        this.foco = p.foco;
+        this.nivelDeSaude = p.nivelDeSaude;
         this.danoRecebido = p.danoRecebido;
         this.danoRecebidoMaximo = p.danoRecebidoMaximo;
         this.situacaoDeVida = p.situacaoDeVida;
@@ -209,221 +171,210 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         this.armadura = p.armadura;
         this.iniciativa = p.iniciativa;
         this.golpes = p.golpes;
+        this.estados = p.estados;
         this.d6 = p.d6;
+        this.pontosDeAcao = p.pontosDeAcao;
     }
     
     
     
-    //ACAO ESQUIVAR
-    
+    /**
+     * ACAO ESQUIVAR
+     * 
+     * Faz com que o personagem entre em estado de esquiva,
+     * gastando um ponto de acao
+     */
     public void esquivar(){
-        if(pontosDeAcao == 0)
+        if(pontosDeAcao <= 0)
             throw new AcaoInvalidaException("esquivar",0);
+        if(getEstaEsquivando())
+            throw new AcaoInvalidaException("esquivar",3);
+
         pontosDeAcao--;
-        estaEsquivando = true;
+        estados.add(Estado.ESQUIVANDO);
     }
     
-    
-    
-    //ACAO DEFENDER
-    
+    /**
+     * ACAO DEFENDER
+     * 
+     * Faz com que o personagem entre em estado de defesa,
+     * gastando um ponto de acao
+     */
     public void defender(){
-        if(pontosDeAcao == 0)
+        if(pontosDeAcao <= 0)
             throw new AcaoInvalidaException("defender",0);
+        if(getEstaDefendendo())
+            throw new AcaoInvalidaException("defender",4);
+        
         pontosDeAcao--;
-        estaDefendendo = true;
+        estados.add(Estado.DEFENDENDO);
     }
-        
-        
-        
-        
+    
+    
+    
     //ACAO ATACAR
     
     /**
      * Ação atacar, o personagem que executa esta ação escolhe um alvo e causa dano nele.
      * 
      * @param alvo Personagem que recebera o ataque
-     * @param golpe String com o nome do golpe que esta sendo executado
-     * @return int onde (-1) significa que o ataque nao acertou o alvo,
-     * (-2) significa que o alvo esquivou, (100 + dano) signifa que o alvo defendendeu
-     * e qualquer outro valor significa que o ataque acertou e o metodo esta retornando o dano
+     * @param golpe Golpe que esta sendo executado
+     * @return String com o relatorio do ataque
      */
-    public String atacar(Personagem alvo, String golpe){
-        Golpe g = getGolpePeloNome(golpe);
-        if(g == null)//vejo se o golpe e valido
+    public String atacar(Personagem alvo, Golpe golpe){
+        //vejo se o golpe e valido
+        if(golpe == null || !temGolpe(golpe))
             throw new AcaoInvalidaException("atacar",1);
-        int custoDaAcao = g.getCustoDeAcao();
-        if(custoDaAcao > pontosDeAcao)// vejo se o personagem tem pontos de acao suficientes
+        
+        int custoDaAcao = golpe.getCustoDeAcao();
+        // vejo se o personagem tem pontos de acao suficientes
+        if(custoDaAcao > pontosDeAcao)
             throw new AcaoInvalidaException("atacar",0);
         //cobro o custo
         pontosDeAcao -= custoDaAcao;
         
-        String relatorio = getNome() + " atacou " + alvo.getNome() + " usando " + golpe;
+        String relatorio = getNome() + " atacou " + alvo.getNome() + " usando " + golpe.getNome();
         
-        //verifico se o alvo esta esquivando
-        if(alvo.estaEsquivando){
-            alvo.estaEsquivando = false;
-            //o alvo roda dois dados
-            int dado1chance = alvo.rodarDado();
-            int dado2chance = alvo.rodarDado();
-            
-            if(dado1chance + dado2chance > 9){//se a soma dos dados for maior que 9, 27% de chance disso ocorrer
-                return relatorio + " porem o alvo se esquivou e portanto nao recebeu dano.";
-            }
+        //verifico se o alvo consegue esquivar
+        if(alvo.tentarEsquivar()){
+            return relatorio + " porém o alvo se esquivou e portanto nao recebeu dano.";
         }
             
-        //agora verifica-se se o atacante acertou o alvo
+        //agora verifico se o atacante acerta o alvo
         if( !golpeAcertou(golpe) ){
             //se o atacante errar
             return relatorio + " porém não conseguiu acertar.";
         }
-        else{
-            //se o atacante acertar o ataque
-            
-            //calculo do dano inicial
-            g.setDanoEmBatalha(d6.rodarDado());
-            int dano = g.getDano();
-            
-            //aumento o dano em +1 se o personagem possuir ponto forte em força
-            if(pontoForte == 0)
-                dano++;
+        
+        //se o atacante acertar o ataque
 
-            //reduzo o dano de acordo com a armadura do alvo
-            dano -= alvo.armadura;
-            
-            //garantia que o dano sera no minimo zero
-            if(dano < 0)
-                dano = 0;
-            
-            //modificador se o alvo esta defendendo
-            if(alvo.estaDefendendo){
-                alvo.estaDefendendo = false;
-                dano *= 0.5;//ou seja, reduzo o dano na metade
-                alvo.receberDano(dano,g);
-                return relatorio + " porem o alvo se defendeu e recebeu apenas " + dano + " de dano.";
-            }
-            else{
-                alvo.receberDano(dano,g);
-                return relatorio + " causando " + dano + " de dano.";
-            }
-        }     
+        //calculo do dano inicial
+        golpe.setDanoEmBatalha(d6.rodarDado());
+        int dano = golpe.getDano();
+
+        //aumento o dano em +1 se o personagem possuir foco em força
+        if(foco == Foco.FORCA)
+            dano++;
+
+        //reduzo o dano de acordo com a armadura do alvo
+        dano -= alvo.armadura.getValor();
+
+        //garantia que o dano sera no minimo zero
+        if(dano < 0)
+            dano = 0;
+
+        //verifico se o alvo consegue defender
+        if(alvo.tentarDefender()){
+            dano *= 0.5;//ou seja, reduzo o dano na metade
+            alvo.receberDano(dano,golpe);
+            return relatorio + " porem o alvo se defendeu e recebeu apenas " + dano + " de dano.";
+        }
+        
+        //caso tudo ocorra normal
+        
+        alvo.receberDano(dano,golpe);
+        return relatorio + " causando " + dano + " de dano.";
     }
-    
     /**
-     * Verifica se o golpe vai acertar, true para acertou e false para errou
+     * Verifica se o usuario tem o golpe g
      * 
-     * @param golpe: String com o nome do golpe
+     * @param g Golpe a ser verificado na lista de golpes
+     * @return True se o personagem possui o golpe, false caso contrario
+     */
+    private boolean temGolpe(Golpe g){
+        for(Golpe x : golpes){
+            if(x == g)
+                return true;
+        }
+        return false;
+    }
+    /**
+     * Tentativa do alvo de se esquivar
+     * 
+     * @return True se esquivou, false caso contrario
+     */
+    private boolean tentarEsquivar(){
+        for(Estado e : estados){
+            if(e == Estado.ESQUIVANDO){
+                estados.remove(e);
+                //o alvo roda dois dados
+                int dado1chance = rodarDado();
+                int dado2chance = rodarDado();
+
+                if(dado1chance + dado2chance > 9){//se a soma dos dados for maior que 9, 27% de chance disso ocorrer
+                    return true;
+                }
+                break;
+            }   
+        }
+        return false;
+    }
+    /**
+     * Verifica se o golpe vai acertar
+     * 
+     * @param golpe Golpe utilizado
      * @return Boolean com true se acertou e false se errou
      */
-    protected boolean golpeAcertou(String golpe){
+    private boolean golpeAcertou(Golpe g){
         //o personagem roda dois dados
         int dado1chance = rodarDado();
         int dado2chance = rodarDado();
-        //return getGolpePeloNome(golpe).getChanceDeAcerto() < (dado1chance + dado2chance);
+        //return g.getChanceDeAcerto() < (dado1chance + dado2chance);
         return true;//true por motivos de teste
         
     }
-    
     /**
-     * Retorna o Golpe procurado
+     * Tentativa do alvo de se defender
      * 
-     * @param nome String com o nome do golpe procurado
-     * @return Golpe preocurado ou null se nao encontrar
+     * @return True se defendeu, false caso contrario
      */
-    public Golpe getGolpePeloNome(String nome){
-        for(Golpe g : golpes){
-            if(g.getNome().equals(nome))
-                return g;
+    private boolean tentarDefender(){
+        for(Estado d : estados){
+            if(d == Estado.DEFENDENDO){
+                estados.remove(d);
+                return true;
+            }
         }
-        return null;
+        return false;
     }
     
     /**
-     * faz as atualizacoes necessarias quando o personagem recebe dano
+     * Faz as atualizacoes necessarias quando o personagem recebe dano
      * 
-     * @param dano int com quantidade de dano tomado
+     * @param dano Int com quantidade de dano tomado
      * @param golpe Golpe que esta recebendo
      */
     protected void receberDano(int dano,Golpe golpe){
         //acrescenta-se o dano calculado ao dano recebido do alvo
         danoRecebido += dano ;
         
-        //adiciono o Xbuff se existir
-        XBuff xbuff = golpe.getXBuff();
-        if(xbuff != null){
-            xbuffs.add(xbuff);
-        }
+        //nao permito extrapolar o maximo
+        if(danoRecebido > danoRecebidoMaximo)
+            danoRecebido = danoRecebidoMaximo;
         
-        //atualizao a situação de vida do alvo
-        defineSituacaoDeVida();
+        //atualizo a situação de vida do alvo
+        attSituacaoDeVida();
     }
     
-    public String receberXBuffs(){
-        if(xbuffs.isEmpty()){
-            return "";
-        }
-        
-        String retorno = nome + " recebeu as seguintes xbuffs:\n";
-        for(int i = 0; i < xbuffs.size(); i++){
-            XBuff x = xbuffs.get(i);
-            //se for um xbuff referente a vida
-            if(x.getLocalDeEfeito() == 0){
-                //somo ou tiro da vida
-                danoRecebido += x.getPontosDeEfeito();
-                //faco o turno passar para o xbuff
-                x.rodadaPassou();
-                
-                //add no relatorio
-                retorno += "\t" + x.getNome() + " que acrescentou " + x.getPontosDeEfeito() + 
-                        " aos danos recebidos, e ira durar mais " + x.getDuracao() + " turnos.\n";
-                
-                //garanto que o danoRecebido n fique em um valor invalido
-                if(danoRecebido < 0)
-                    danoRecebido = 0;
-                if(danoRecebido > danoRecebidoMaximo)
-                    danoRecebido = danoRecebidoMaximo;
-                //atualizo a situacao da vida
-                defineSituacaoDeVida();
-                //se a duracao zerou o xbuff acabou
-                if(x.getDuracao() == 0){
-                    xbuffs.remove(x);
-                }
-            }
-            if(x.getLocalDeEfeito() == 1){
-                estaCongelado = true;
-                x.rodadaPassou();
-                //se a duracao zerou o xbuff acabou
-                if(x.getDuracao() == -1){
-                    estaCongelado = false;
-                    xbuffs.remove(x);
-                }
-                else{
-                    retorno += "\t" + x.getNome() + " esta ativo, e ira durar mais " + x.getDuracao() + " turnos.\n";
-                }
-            }
-            
-            
-        }//fecha loop dos xbuffs
-        return retorno;   
-    }
     
     /**
-     * Define a situacao de vida do personagem com base no dano recebido
+     * Atualiza a situacao de vida do personagem
      */
-    protected void defineSituacaoDeVida(){
+    protected void attSituacaoDeVida(){
+        //comentario de auxilio
         //0-Saudável     1-Atordoado     2-Desesperado     3-Inconsciente   4-Morto
         //20% dano       40% dano        60% dano          99% dano         100% dano
         
         if (danoRecebido < danoRecebidoMaximo * 0.2)
-            situacaoDeVida = 0;
-        else if (danoRecebido >= danoRecebidoMaximo * 0.2 && danoRecebido < danoRecebidoMaximo * 0.4)
-            situacaoDeVida = 1;
-        else if (danoRecebido >= danoRecebidoMaximo * 0.4 && danoRecebido < danoRecebidoMaximo * 0.6)
-            situacaoDeVida = 2;
-        else if (danoRecebido >= danoRecebidoMaximo * 0.6 && danoRecebido < danoRecebidoMaximo)
-            situacaoDeVida = 3;
-        else if (danoRecebido >= danoRecebidoMaximo){
-            situacaoDeVida = 4;
+            situacaoDeVida = SituacaoDeVida.SAUDAVEL;
+        else if (danoRecebido < danoRecebidoMaximo * 0.4)
+            situacaoDeVida = SituacaoDeVida.ATORDOADO;
+        else if (danoRecebido < danoRecebidoMaximo * 0.6)
+            situacaoDeVida = SituacaoDeVida.DESESPERADO;
+        else if (danoRecebido < danoRecebidoMaximo)
+            situacaoDeVida = SituacaoDeVida.INCONSCIENTE;
+        else{
+            situacaoDeVida = SituacaoDeVida.MORTO;
             diminuiNumInstancias();
         }
     }
@@ -433,23 +384,38 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public abstract void diminuiNumInstancias ();
     
+    /**
+     * Diz se uma classe é ou nao magica
+     * 
+     * @return True se sim, false se nao
+     */
+    public boolean verificaClasseMagica() {
+        return (classe == Classe.MAGO ||
+                classe == Classe.CLERIGO||
+                classe == Classe.CULTISTA ||
+                classe == Classe.DRAGAO);
+    }
     
     /**
-     * Adiciona um golpes fisicos a lista de golpes que o personagem pode executar
+     * Adiciona um golpe ja existente ao arsenal de um personagem
+     * 
+     * @param g Golpe a ser adicionado
+     */
+    public void addGolpe(Golpe g){
+        if(g == null)
+            throw new InfInvalidoException("Golpe","NULL");
+        golpes.add(g);
+    }
+    
+    /**
+     * Adiciona um golpe fisico a lista de golpes que o personagem pode executar
      * 
      * @param nome String com o nome do golpe
      */
     public void addGolpeFisico(String nome){
-        if(getGolpePeloNome(nome) != null)
+        if(possueGolpe(nome))
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeFisico(nome,arma));
-    }
-    
-    public boolean verificaClasseMagica() {
-        return (classe.equals("Mago") ||
-                classe.equals("Clerigo") ||
-                classe.equals("Cultista") ||
-                classe.equals("Dragao"));
     }
     
     /**
@@ -459,8 +425,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public void addGolpeMagicoBasico(String nome){
         if(!verificaClasseMagica())
-            throw new InfInvalidoException("Classe",classe);
-        if(getGolpePeloNome(nome) != null)
+            throw new InfInvalidoException("Classe",classe.getString());
+        if(possueGolpe(nome))
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoBasico(nome));
     }
@@ -472,8 +438,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public void addGolpeMagicoBolaDeFogo(String nome){
         if(!verificaClasseMagica())
-            throw new InfInvalidoException("Classe",classe);
-        if(getGolpePeloNome(nome) != null)
+            throw new InfInvalidoException("Classe",classe.getString());
+        if(possueGolpe(nome))
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoBolaDeFogo(nome));
     }
@@ -485,8 +451,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public void addGolpeMagicoMeteoro(String nome){
         if(!verificaClasseMagica())
-            throw new InfInvalidoException("Classe",classe);
-        if(getGolpePeloNome(nome) != null)
+            throw new InfInvalidoException("Classe",classe.getString());
+        if(possueGolpe(nome))
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoMeteoro(nome));
     }
@@ -498,8 +464,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public void addGolpeMagicoLancaDeGelo(String nome){
         if(!verificaClasseMagica())
-            throw new InfInvalidoException("Classe",classe);
-        if(getGolpePeloNome(nome) != null)
+            throw new InfInvalidoException("Classe",classe.getString());
+        if(possueGolpe(nome))
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoLancaDeGelo(nome));
     }
@@ -511,8 +477,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public void addGolpeMagicoNevasca(String nome){
         if(!verificaClasseMagica())
-            throw new InfInvalidoException("Classe",classe);
-        if(getGolpePeloNome(nome) != null)
+            throw new InfInvalidoException("Classe",classe.getString());
+        if(possueGolpe(nome))
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoNevasca(nome));
     }
@@ -525,16 +491,12 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         return nome;
     }
     
-    public String getClasse(){
+    public Classe getClasse(){
         return classe;
     }
     
-    public String getPontoForte(){
-        return pontoForteString();
-    }
-    
-    public int getPontoSaude(){
-        return pontoSaude;
+    public Foco getFoco(){
+        return foco;
     }
     
     public int getDanoRecebido(){
@@ -545,68 +507,47 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         return danoRecebidoMaximo;
     }
     
-    public String getSituacaoDeVida(){
-        return situacaoDeVidaString();
+    public SituacaoDeVida getSituacaoDeVida(){
+        return situacaoDeVida;
     }
     
-    public int getArma(){
+    public Arma getArma(){
         return arma;
     }
     
-    public int getArmadura(){
+    public Armadura getArmadura(){
         return armadura;
+    }
+    
+    public int getNivelDeSaude(){
+        return nivelDeSaude;
     }
     
     public int getIniciativa(){
         return iniciativa;
     }
     
+    public List<Golpe> getGolpes(){
+        return golpes;
+    }
+    
+    public Golpe getGolpePeloNome(String g){
+        for(Golpe gg : golpes){
+            if(gg.getNome().equals(g))
+                return gg;
+        }
+        return null;
+    }
+    
     public int getPontosDeAcao(){
         return pontosDeAcao;
     }
     
-    public void setPontosDeAcao(int pontosDeAcao){
-        if(pontosDeAcao < 0 || pontosDeAcao > 2)
-            throw new InfInvalidoException("Pontos de ação",String.valueOf(pontosDeAcao));
-        this.pontosDeAcao = pontosDeAcao;
-    }
-    
-    public int getNumGolpes() {
-        return golpes.size();
-    }
-    
     /**
-     * Retorna o nome do golpe na posicao pos da lista
-     * @param pos int com a posicao na lista
-     * @return String com o nome do golpe
+     * Reseta os pontos para ficarem iguais a 2 no inicio do turno
      */
-    public String getGolpe(int pos) {
-        if(pos < 0 || pos > golpes.size() - 1)
-            throw new IndexOutOfBoundsException("Posição " + pos + " não existe em golpes.");
-        return golpes.get(pos).getNome();
-    }
-    
-    /**
-     * Retorna o custo de um golpe na posicao pos da lista
-     * 
-     * @param pos int com a posicao na lista
-     * @return int com o custo
-     */
-    public int getGolpeCusto(int pos) {
-        if(pos < 0 || pos > golpes.size() - 1)
-            throw new IndexOutOfBoundsException("Posição " + pos + " inválida.");
-        return golpes.get(pos).getCustoDeAcao();
-    }
-    
-    /**
-     * Retorna o tipo de um golpe na posicao pos da lista
-     * @param pos int com a posicao na lista
-     * @return String com o tipo
-     */
-    public String getGolpeTipo(int pos) {
-        if(pos < 0 || pos > golpes.size() - 1)
-            throw new IndexOutOfBoundsException("Posição " + pos + " inválida.");
-        return golpes.get(pos).getTipo();
+    public void resetarPontosDeAcao(){
+        this.pontosDeAcao = 2;
     }
     
     /**
@@ -615,19 +556,45 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      * @return Boolean com true se vivo e false se morto
      */
     public boolean estaVivo(){
-        return situacaoDeVida != 4;
+        return situacaoDeVida != SituacaoDeVida.MORTO;
     } 
     
+    /**
+     * @return True se esta defendendo, false se nao
+     */
     public boolean getEstaDefendendo(){
-        return estaDefendendo;
+        for(Estado d : estados){
+            if(d == Estado.DEFENDENDO){
+                return true;
+            }
+        }
+        return false;
     }
     
+    /**
+     * @return True se esta esquivando, false se nao
+     */
     public boolean getEstaEsquivando(){
-        return estaEsquivando;
+        for(Estado d : estados){
+            if(d == Estado.ESQUIVANDO){
+                return true;
+            }
+        }
+        return false;
     }
     
-    public boolean getEstaCongelado(){
-        return estaCongelado;
+    /**
+     * Verifica se o personagem ja tem um golpe com esse nome
+     * 
+     * @param nome Nome do golpe
+     * @return True se ja possui o golpe, false caso contrario
+     */
+    public boolean possueGolpe(String nome){
+        for(Golpe g: golpes){
+            if(g.getNome().equals(nome))
+                return true;
+        }
+        return false;
     }
     
     //OUTROS
@@ -647,71 +614,22 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         return 0;
     }
     
+    /**
+     * Seta a iniciativa, considerando que esta recebendo o valor de um dado d6,
+     * na implementacao é somado +1 de iniciativa se o personagem tiver ponto forte em destreza
+     * 
+     * @param iniciativa Valor do dado
+     */
     public void setIniciativa(int iniciativa){
         if(iniciativa < 0 || iniciativa > 6)
             throw new InfInvalidoException("Pontos de ação",String.valueOf(pontosDeAcao));
-        if(pontoForte == 1)
-            //se tiver ponto forte em destreza
+        
+        if(foco == Foco.DESTREZA)
+            //se tiver foco em destreza
             this.iniciativa = iniciativa + 1;
         else
             //se nao tiver ponto forte em destreza
             this.iniciativa = iniciativa;
-    }
-    
-    
-    /**
-     * Retorna a situacao de vida como forma de uma String representativa
-     * 
-     * @return String da situacao de vida
-     */
-    protected String situacaoDeVidaString(){
-        String texto;
-        texto = "Erro";
-        
-        switch(situacaoDeVida){
-            case 0:
-                texto = "Saudável";
-                break;
-            case 1:
-                texto = "Atordoado";
-                break;
-            case 2:
-                texto = "Desesperado";
-                break;
-            case 3:
-                texto = "Inconsciente";
-                break;
-            case 4:
-                texto = "Morto";
-                break;
-        }
-        return texto;
-    }
-    
-    /**
-     * Retorna o ponto forte como forma de uma String representativa
-     * 
-     * @return String do ponto forte
-     */
-    protected String pontoForteString(){
-        String texto;
-        texto = "Erro";
-        
-        switch(this.pontoForte){
-            case 0:
-                texto = "Força";
-                break;
-            case 1:
-                texto = "Destreza";
-                break;
-            case 2:
-                texto = "Constituição";
-                break;
-            case 3:
-                texto = "Carisma";
-                break;
-        }
-        return texto;
     }
     
     /**

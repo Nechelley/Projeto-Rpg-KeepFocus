@@ -1,53 +1,39 @@
 package rpg.golpes;
 
-import rpg.xbuff.XBuff;
-import rpg.Dado;
-import rpg.InfInvalidoException;
+import rpg.excecoes.InfInvalidoException;
+import rpg.personagens.Arma;
 
 /**
- *
+ * Golpe do tipo ataque basico, pois depende so da arma e do lancamento do dado
+ * dano = ((d6/2) + base)
+ * chance = 6
+ * custo = 1
+ * 
  * @author Nechelley Alves
  */
 public class GolpeFisico extends Golpe{
+    
     /**
      * Construtor onde defino como o golpe sera executado, com base na arma do personagem
+     * @param nome Nome do Golpe
+     * @param arma Arma utilizada para fazer o ataque
      */
-    public GolpeFisico(String nome, int arma){
+    public GolpeFisico(String nome, Arma arma){
         super(nome);
-        Dado d6 = new Dado(6);
-        if(arma < 0 || arma > 2)
-            throw new InfInvalidoException("Arma",String.valueOf(arma));
-        switch(arma){
-            case 0:
-                setDano(0);
-                break;
-            case 1:
-                setDano(1);
-                break;
-            case 2:
-                setDano(2);
-                break;
-        }
-        
+        if(arma == null)
+            throw new InfInvalidoException("Arma","NULL");
+        setDanoBase(arma.getValor());
         setChanceDeAcerto(6);
         setCustoDeAcao(1);
     }
     
-    public XBuff getXBuff(){
-        return null;
-    }
-    
-    @Override
-    public void setDanoEmBatalha(int valorDoDado){
-        setDano(Math.round(valorDoDado/2) + getDano());
-    }
-    
     /**
-     * Retorna o tipo do golpe
-     * @return String com o tipo do golpe
+     * Calculo do dano do ataque do tipo ataque basico
+     * 
+     * @param valorDoDado Valor do dado jogado
      */
     @Override
-    public String getTipo() {
-        return "fisico";
+    public void setDanoEmBatalha(int valorDoDado){
+        setDano(Math.round(valorDoDado/2) + getDanoBase());
     }
 }

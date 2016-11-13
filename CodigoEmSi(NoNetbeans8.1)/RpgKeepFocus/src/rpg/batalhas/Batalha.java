@@ -1,4 +1,6 @@
-package rpg;
+package rpg.batalhas;
+
+import rpg.excecoes.InfInvalidoException;
 import java.io.Serializable;
 import rpg.personagens.Personagem;
 import java.util.List;
@@ -12,51 +14,53 @@ import java.util.Collections;
  */
 public class Batalha implements Serializable{
     //variavel que diz se esta ou nao ocorrendo a batalha
-    private boolean estaOcorrendo;
+    private SituacaoDaBatalha situacaoDaBatalha;
     //lista com os personagens
-    private ArrayList<Personagem> lutadores;
+    private List<Personagem> lutadores;
     //representa o turno que esta a batalha
     private int turno;
     //String dizendo quem venceu
     private String vencedores;
     
-    
-    
-     //QUESTAO DA INICIALIZACAO DA BATALHA
-    
     /**
      * Construtor que cria uma batalha, mas nao a inicializa ainda
      * 
      * @param timeDosHerois Lista com os herois que lutarao no lado dos herois nesta partida
-     * @param mobs Lista com os mobs que lutarao no lado dos inimigos nesta partida
+     * @param timeDosInimigos Lista com os timeDosInimigos que lutarao no lado dos inimigos nesta partida
      */
-    public Batalha(List<Personagem> timeDosHerois, List<Personagem> mobs){
-        estaOcorrendo = false;
+    public Batalha(List<Personagem> timeDosHerois, List<Personagem> timeDosInimigos){
+        situacaoDaBatalha = SituacaoDaBatalha.NAOOCORRENDO;
         turno = 1;
+        vencedores = null;
         lutadores = new ArrayList<Personagem>();
         if(timeDosHerois == null)
-            throw new InfInvalidoException("Lista do time dos herois","");
-        if(mobs == null)
-            throw new InfInvalidoException("Lista dos inimigos","");
-        for(int i = 0; i < timeDosHerois.size(); i++){
-            lutadores.add(timeDosHerois.get(i));
-        }
-        for(int i = 0; i < mobs.size(); i++){
-            lutadores.add(mobs.get(i));
-        }
+            throw new InfInvalidoException("Lista do time dos herois","NULL");
+        if(timeDosInimigos == null)
+            throw new InfInvalidoException("Lista dos inimigos","NULL");
+        for(Personagem p : timeDosHerois)
+            lutadores.add(p);
+        for(Personagem p : timeDosInimigos)
+            lutadores.add(p);
     }
+    
+    
+    
+    //QUESTAO DA INICIALIZACAO DA BATALHA
     
     /**
      * Inicializa a batalha
      */
-    public void comecarBatalha(){
+    public void iniciarBatalha(){
         //defino que a batalha esta ocorrendo
-        estaOcorrendo = true;
+        situacaoDaBatalha = SituacaoDaBatalha.OCORRENDO;
         //defino qual sera a ordem de acao dos personagens
         defineOrdemDeAcao();
     }
     /**
-     * Define a ordem de ação dos lutadores com base no valor de suas iniciativas
+     * Define a ordem de ação dos lutadores com base no valor de suas iniciativas, 
+     * ou seja, todos os lutadores jogam um d6 e quem tiver maior valor
+     * (lembrando que quem tem foco em destreza ganha + 1 ponto no dado) comeca 
+     * escolhendo a acao
      */
     private void defineOrdemDeAcao(){
         //seto iniciativa inicial
@@ -85,7 +89,7 @@ public class Batalha implements Serializable{
      /**
      * Retorna o numero de inimigos em uma batalha
      * 
-     * @return int com o numero de inimigos na batalha
+     * @return Int com o numero de inimigos na batalha
      */
     public int getNumInimigos(){
         int cont = 0;
@@ -99,7 +103,7 @@ public class Batalha implements Serializable{
     /**
      * Retorna a lista com todos os inimigos
      * 
-     * @return lsita com os inimigos
+     * @return Lista com os inimigos
      */
     public List<Personagem> getInimigos(){
         List<Personagem> list = new ArrayList<Personagem>();
@@ -120,7 +124,7 @@ public class Batalha implements Serializable{
     /**
      * Retorna a quantidade de lutadores no total
      * 
-     * @return int com quantidade de jogadores
+     * @return Int com quantidade de jogadores
      */
     public int getNumLutadores(){
         return lutadores.size();
@@ -129,7 +133,7 @@ public class Batalha implements Serializable{
     /**
      * Retorna a lista com todos os lutadores
      * 
-     * @return lsita com os lutadores
+     * @return Lista com os lutadores
      */
     public List<Personagem> getLutadores(){
         return lutadores;
@@ -143,33 +147,13 @@ public class Batalha implements Serializable{
     //QUESTAO DOS ALVOS
     
     /**
-     * Retorna a quantidade de alvos do Personagem p
-     * 
-     * @param p Personagem ao qual deseja-se saber a quantidade de alvos
-     * @return int com a quantidade de possiveis alvo do personagem
-     */
-    public int getNumPossiveisAlvos(Personagem p){
-        int cont = 0;
-        
-        //para cada lutador na batalha
-        for(Personagem l : lutadores){
-            //verifico se é antagonico ao personagem, e se não esta morto
-            if(l.getEhHeroi() != p.getEhHeroi() && l.estaVivo()){
-                cont++;
-            }
-        }
-        
-        return cont;
-    }
-    
-    /**
      * Retorna uma lista com os possiveis personagens alvos de p
      * 
      * @param p Personagem que sera verificado seus possiveis alvos
-     * @return ArrayList com os possiveis alvos de p
+     * @return List com os possiveis alvos de p
      */
-    public ArrayList<Personagem> getPossiveisAlvos(Personagem p){
-        ArrayList<Personagem> alvos = new ArrayList<Personagem>();
+    public List<Personagem> getPossiveisAlvos(Personagem p){
+       List<Personagem> alvos = new ArrayList<Personagem>();
         
         //para cada lutador na batalha
         for(Personagem l : lutadores){
@@ -199,7 +183,7 @@ public class Batalha implements Serializable{
     /**
      * retorna o turno atual
      * 
-     * @return int com o turno atual
+     * @return Int com o turno atual
      */
     public int getTurno(){
         return turno;
@@ -217,7 +201,7 @@ public class Batalha implements Serializable{
     /**
      * Retorna o numero de herois em uma batalha
      * 
-     * @return int com o numero de herois na batalha
+     * @return Int com o numero de herois na batalha
      */
     public int getNumHerois(){
         int cont = 0;
@@ -231,9 +215,10 @@ public class Batalha implements Serializable{
     /**
      * Retorna se a batalha atual ja acabou ou nao
      * 
-     * @return boolean onde (true)-a batalha acabou e alguem ganhou ou (false)-caso nao
+     * @return Boolean onde (true)-a batalha acabou e alguem ganhou ou 
+     * (false) caso contrario
      */
-    public boolean getAcabou(){
+    public boolean verificaSeBatalhaAcabou(){
         //numero de herois mortos
         int mortosH = 0;
         //numero de inimigos mortos
@@ -259,22 +244,21 @@ public class Batalha implements Serializable{
 
         if(mortosH == getNumHerois()){
             vencedores = "Inimigos";
-            estaOcorrendo = false;
+            situacaoDaBatalha = SituacaoDaBatalha.NAOOCORRENDO;
             return true;
         }
-        else if(mortosI == getNumInimigos()){
+        if(mortosI == getNumInimigos()){
             vencedores = "Herois";
-            estaOcorrendo = false;
+            situacaoDaBatalha = SituacaoDaBatalha.NAOOCORRENDO;
             return true;
         }
-        else{
-            return false;
-        }
+        return false;
     }
     
     /**
      * Retorna uma string com os vencedores
-     * @return string com os vencedores
+     * 
+     * @return String com os vencedores, caso ainda nao exista vencedor, retorna null
      */
     public String getVencedores(){
         return vencedores;
