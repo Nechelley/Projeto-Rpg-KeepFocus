@@ -22,15 +22,15 @@ public interface ObservadorJogo {
     
     void exibindoInformacoesResumidasDeTodosOsLutadores(String[][] inf);
     
-    void exibindoTurnoAtual();
+    void exibindoTurnoAtual(int turno);
     
     void antesDeExibirVezDoLutador(String lutadorNome);
     
     void exibindoRelatorio(String relatorio);
     
-    void encerramentoDaBatalha();
+    void encerramentoDaBatalha(String vencedores);
     
-    void exibirFim();
+    void exibirFim(int pontuacao);
     
     int escolhendoAcao(String[] inf);
     

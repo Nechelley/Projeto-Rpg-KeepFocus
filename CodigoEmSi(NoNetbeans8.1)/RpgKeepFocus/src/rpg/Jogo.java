@@ -86,7 +86,7 @@ public class Jogo implements Serializable{
         while(situacaoDoJogo != SituacaoDoJogo.ACABOU){
             //comeca a batalha atual
             iniciarBatalha();
-            System.out.println("chegeu");
+            
             //Apresento os inimigos
             tela.apresentandoInimigos(matrizInimigos());
             
@@ -99,7 +99,7 @@ public class Jogo implements Serializable{
             //inicio do loop da batalha atual
             while(!batalhaAtual.verificaSeBatalhaAcabou()){//enquanto a batalha estiver ocorrendo, ou seja, nao acabou
                 
-                tela.exibindoTurnoAtual();
+                tela.exibindoTurnoAtual(batalhaAtual.getTurno());
                             
                 //começo o loop do turno
                 boolean flagDoTurno = true;
@@ -121,7 +121,7 @@ public class Jogo implements Serializable{
                         tela.exibindoRelatorio(relatorio);
                         continue;
                     }
-                    
+
                     //neste ponto verifico se o lutador é um Inimigo e ativo a IA se necessario
                     if(!lutador.getEhHeroi()){
                         relatorio = executarIA(lutador);
@@ -130,10 +130,12 @@ public class Jogo implements Serializable{
                         if(batalhaAtual.verificaSeBatalhaAcabou()){
                             //se entrou neste if quer dizer que a batlaha acabou no turno de um inimigo, portanto os herois perderam
                             flagDoTurno = false;
-                            tela.encerramentoDaBatalha();
+                            tela.encerramentoDaBatalha(getVencedores());
                             encerrarJogo();
-                            tela.exibirFim();
-                        }
+                            tela.exibirFim(pontuacao);
+                        }else
+                            // situaçao de todos os personagens
+                            tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
                         continue;
                     }
                     
@@ -143,10 +145,9 @@ public class Jogo implements Serializable{
                     //escrever o que aconteceu, como se desenrolou a acao
                     if(batalhaAtual.verificaSeBatalhaAcabou()){
                         flagDoTurno = false;
-                        tela.encerramentoDaBatalha();
+                        tela.encerramentoDaBatalha(getVencedores());
                         ganharPonto();
-                        tela.exibirFim();
-                        encerrarJogo();
+                        tela.exibirFim(pontuacao);
 
                     }else{
                         // situaçao de todos os personagens
@@ -156,10 +157,14 @@ public class Jogo implements Serializable{
                 }//fecha loop do Turno
                 
                 if (!batalhaAtual.verificaSeBatalhaAcabou())
-                    tela.exibindoRelatorio(passarTurno());
+                    passarTurno();
             }//fecha loop da batalha
         }//fecha loop do jogo
     }
+    
+    /**
+     * Cria o time de herois, pedindo suas informacoes e guardando me timDosHerois
+     */
     private void criandoTimeDeHerois(){
         int op;
         do{
@@ -199,14 +204,45 @@ public class Jogo implements Serializable{
         }while(op != 2);
     }
     /**
+     * Cria e adiciona um heroi ao time dos herois do jogo
+     * 
+     * @param nome String com o nome do Heroi
+     * @param classe String com qual sera a classe do Heroi
+     * @param foco String com qual sera o ponto forte do Heroi
+     * @param arma String dizendo qual o tipo de arma o Heroi usara
+     * @param armadura String com qual o tipo de armadura o Heroi usara
+     * @return Personagem que acabou de ser criado e adicionado ao time dos herois
+     */
+    public Personagem adicionarHeroi(String nome, String classe, String foco, String arma, String armadura){
+        if(situacaoDoJogo != SituacaoDoJogo.CRIANDOHEROIS)
+            throw new AcaoInvalidaException("adicionar heroi",2);
+        
+        Classe classee = Classe.getClassePorId(Integer.parseInt(classe));
+        Foco focoo = Foco.getFocoPorId(Integer.parseInt(foco));
+        Arma armaa = Arma.getArmaPorId(Integer.parseInt(arma));
+        Armadura armaduraa = Armadura.getArmaduraPorId(Integer.parseInt(armadura));
+        
+        Personagem p = new Heroi(nome, classee, focoo, armaa, armaduraa);
+        
+        //adiciona a habilidadeDoTimeDeHerois do heroi no índice de habilidadeDoTimeDeHerois total
+        habilidadeDoTimeDeHerois += p.getNivelDeSaude() + armaa.getValor() + armaduraa.getValor();
+        
+        timeDosHerois.add(p);
+        
+        return p;
+    }
+    
+    
+    
+    /**
      * Matriz de Inimigos na ordem
-     * {nome,classe,foco,nivelDeSaude,danoRecebido,danoRecebidoMaximo,situacaoDeVida,
+     * {posicaoDoInimigo}{nome,classe,foco,nivelDeSaude,danoRecebido,danoRecebidoMaximo,situacaoDeVida,
      * Arma,Armadura,Iniciativa}
      * 
      * @return String[][] com as informacoes dos inimigos
      */
     private String[][] matrizInimigos(){
-        String[][] inf = null;
+        String[][] inf = new String[batalhaAtual.getInimigos().size()][10];
         int cont = 0;
         for(Personagem p : batalhaAtual.getInimigos()){
             inf[cont][0] = p.getNome();
@@ -225,12 +261,12 @@ public class Jogo implements Serializable{
     }
     /**
      * Matriz de Lutadores ordem
-     * {defendendo,esquivando,nome,danoRecebido,danoRecebidoMaximo,situacaoDeVida,pontosDeAcao}
+     * {posicaoDoLutador}{defendendo,esquivando,nome,danoRecebido,danoRecebidoMaximo,situacaoDeVida,pontosDeAcao}
      * 
      * @return String[][] com as informacoes dos lutadores
      */
     private String[][] matrizLutadores(){
-        String[][] inf = null;
+        String[][] inf = new String[batalhaAtual.getLutadores().size()][7];
         int cont = 0;
         for(Personagem p : batalhaAtual.getLutadores()){
             if(p.getEstaDefendendo())
@@ -252,6 +288,14 @@ public class Jogo implements Serializable{
 
         return inf;
     }
+    /**
+     * Vetor com as informacoes necessarias de um lutador para exibir o menu de 
+     * escolher acao na ordem
+     * {nome,pontosDeAcao,(estaDefendendo ou ""),(estaEsquivando ou "")}
+     * 
+     * @param lutador Personagem com as informacoes
+     * @return String[] com as informacoes
+     */
     private String[] vetorParaEscolherAcao(Personagem lutador){
         String[] inf = new String[4];
         inf[0] = lutador.getNome();
@@ -267,6 +311,13 @@ public class Jogo implements Serializable{
         
         return inf;
     }
+    /**
+     * Vetor com as informacoes necessarias de um lutador para exibir o menu de 
+     * escolher alvo, vem com todos os nomes de alvos
+     * 
+     * @param lutador Personagem com as informacoes
+     * @return String[] com as informacoes
+     */
     private String[] vetorParaEscolherAlvo(Personagem lutador){
         List<Personagem> lista = batalhaAtual.getPossiveisAlvos(lutador);
         String[] inf = new String[lista.size()];
@@ -277,6 +328,13 @@ public class Jogo implements Serializable{
         }
         return inf;
     }
+    /**
+     * Matriz com as informacoes dos golpes na ordem
+     * {posicaoDoGolpe}{nome,custo}
+     * 
+     * @lutador Personagem para se adquirir as informacoes
+     * @return String[][] com as informacoes dos golpes
+     */
     private String[][] matrizParaEscolherGolpe(Personagem lutador){
         List<Golpe> lista =lutador.getGolpes();
         String[][] inf = new String[lista.size()][2];
@@ -338,9 +396,9 @@ public class Jogo implements Serializable{
                 flagPersonagem = false;//sai do loop de personagens
         }///fecha loop do Personagem
     }
-    
     /**
-     * esquiva
+     * Executa a cao de esquivar do lutador
+     * 
      * @param lutador lutador na lista de lutadores da batalha
      * @return relatorio de esquivar
      */
@@ -350,11 +408,11 @@ public class Jogo implements Serializable{
         lutador.esquivar();
         return (lutador.getNome() + " podera tentar esquivar do proximo ataque que receber.");
     }
-    
     /**
-     * defendender
+     * Executa a cao de defender do lutador
+     * 
      * @param lutador lutador na lista de lutadores da batalha
-     * @return 
+     * @return relatorio de defender
      */
     public String defender(Personagem lutador){
         if(lutador.getEstaDefendendo())
@@ -362,7 +420,12 @@ public class Jogo implements Serializable{
         lutador.defender();
         return (lutador.getNome() + " podera se defender do proximo ataque que receber.");
     }
-    
+    /**
+     * Executa a cao de atacado lutador
+     * 
+     * @param lutador lutador na lista de lutadores da batalha
+     * @return relatorio de atacar
+     */
     public String atacar(Personagem lutador){
         //ler informações necessarias para executar a acao atacar
         
@@ -381,76 +444,30 @@ public class Jogo implements Serializable{
     }
     
     
-
-    
-    
-    //PONTUACAO
     /**
-     * Aumenta a pontuacao em um ponto, deve ser usado apos uma vitoria de batalha
-     */
-    public void ganharPonto(){
-        pontuacao++;
-    }
-    
-    /**
-     * Retorna o valor da pontuacao atual
+     * Aciona a acao atacar do lutador na posicao posAtacante e seleciona como alvo
+     * deste ataque o lutador com o nome de alvoNome
      * 
-     * @return int com a pontuacao atual
+     * @param atacante Personagem que esta atacando
+     * @param nomeAlvo String com o nome do alvo
+     * @param golpe String com o nome do golpe sendo executado
+     * @return String dizendo oque aconteceu no ataque
      */
-    public int getPontuacao(){
-        return pontuacao;
+    public String lutadorAtacaAlvo(Personagem atacante, String nomeAlvo, String golpe){
+        
+        List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(atacante);
+        
+        Personagem alvo = null;
+        for(int i = 0; i < alvos.size(); i++){
+            if(nomeAlvo.equals(alvos.get(i).getNome()))
+                alvo = alvos.get(i);
+        }
+        
+        return atacante.atacar(alvo,atacante.getGolpePeloNome(golpe));
     }
     
-    
-    
-    
-    
-    
-    //COISAS DE HEROI
-    
-    /**
-     * Cria e adiciona um heroi ao time dos herois do jogo
-     * 
-     * @param nome String com o nome do Heroi
-     * @param classe String com qual sera a classe do Heroi
-     * @param foco String com qual sera o ponto forte do Heroi
-     * @param arma String dizendo qual o tipo de arma o Heroi usara
-     * @param armadura String com qual o tipo de armadura o Heroi usara
-     * @return Personagem que acabou de ser criado e adicionado ao time dos herois
-     */
-    public Personagem adicionarHeroi(String nome, String classe, String foco, String arma, String armadura){
-        if(situacaoDoJogo != SituacaoDoJogo.CRIANDOHEROIS)
-            throw new AcaoInvalidaException("adicionar heroi",2);
-        
-        Classe classee = Classe.getClassePorId(Integer.parseInt(classe));
-        Foco focoo = Foco.getFocoPorId(Integer.parseInt(foco));
-        Arma armaa = Arma.getArmaPorId(Integer.parseInt(arma));
-        Armadura armaduraa = Armadura.getArmaduraPorId(Integer.parseInt(armadura));
-        
-        Personagem p = new Heroi(nome, classee, focoo, armaa, armaduraa);
-        
-        //adiciona a habilidadeDoTimeDeHerois do heroi no índice de habilidadeDoTimeDeHerois total
-        habilidadeDoTimeDeHerois += p.getNivelDeSaude() + armaa.getValor() + armaduraa.getValor();
-        
-        timeDosHerois.add(p);
-        
-        return p;
-    }
-    
-    
-    
-    
-    
-    /**
-     * Retorna o vencedor da batalha atual
-     * 
-     * @return String dizendo quem venceu
-     */
-    public String getVencedores(){
-        if(!batalhaAtual.verificaSeBatalhaAcabou())
-            return "A Batalha ainda não acabou.";
-        return batalhaAtual.getVencedores();
-    }
+   
+ 
      
     
     /**
@@ -463,12 +480,12 @@ public class Jogo implements Serializable{
         
         Random aleatorio = new Random();
         //Adiciona um número de inimigos na lista
-        while (habilidadeDoTimeDeInimigos < habilidadeDoTimeDeHerois) {
+        do{
             int pos = aleatorio.nextInt(Inimigo.numDeClassesDeInimigos());
             if(pos < 0 || pos > Inimigo.numDeClassesDeInimigos() -1)
                 throw new IndexOutOfBoundsException("Posição " + pos + " não existe em inimigos.");
             inimigos.add(adicionarInimigo(pos));
-        }
+        }while (habilidadeDoTimeDeInimigos < habilidadeDoTimeDeHerois);
         
         if (inimigos.isEmpty())
             throw new RuntimeException("Nenhum inimigo adicionado na batalha.");
@@ -528,6 +545,14 @@ public class Jogo implements Serializable{
                 i.addGolpeFisico("Arranhao");
                 break;
             default:
+                /*
+                    ARRUMAR DEPOIS PARA TER TODOS OS INIMIGOS
+                
+                */
+                arma = Arma.getArmaPorId(aleatorio.nextInt(2));
+                armadura = Armadura.getArmaduraPorId(0);
+                i = new Zumbi(pontoForte,arma,armadura);
+                i.addGolpeFisico("Arranhao");
                 break;
         }
         
@@ -546,6 +571,8 @@ public class Jogo implements Serializable{
     public void encerrarJogo(){
         situacaoDoJogo = SituacaoDoJogo.ACABOU;
     }  
+    
+    
     
     
     
@@ -642,35 +669,35 @@ public class Jogo implements Serializable{
                     break;
             }
         }
-        
-        Random aleatorio = new Random();
-        return lutadorAtacaAlvo(lutador,alvo.getNome(),definirGolpeNoAlvo(lutador).getNome());
+
+       return lutadorAtacaAlvo(lutador,alvo.getNome(),definirGolpeNoAlvo(lutador).getNome());
     }
     
     /**
      * Define um alvo aleatório a ser atacado.
      * 
      * @param lutador lutador na lista de lutadores da batalha
-     * @return int com a posicao do alvo a ser atacado
+     * @return Personagem alvo
      */
     private Personagem definirAlvoAleatorio(Personagem lutador) {
         List<Personagem> lista = batalhaAtual.getPossiveisAlvos(lutador);
         Random random = new Random();
+        
         return lista.get(random.nextInt(lista.size()));
     }
     /**
      * Define o alvo a ser atacado como o alvo mais fraco.
      * 
      * @param lutador lutador na lista de lutadores da batalha
-     * @return int com a posicao do alvo a ser atacado
+     * @return Personagem alvo
      */
     private Personagem definirAlvoMaisFraco(Personagem lutador) {
         //Faz uma lista de todos os alvos possíveis do atacante
         List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(lutador);
         
         //Percorre a lista verificando qual é o alvo com maior dano
-        int maiorDano = alvos.get(0).getDanoRecebido();
-        Personagem alvo = null;
+        Personagem alvo = alvos.get(0);
+        int maiorDano = alvo.getDanoRecebido();
         for(Personagem p : alvos){
             SituacaoDeVida situacaoAlvo = p.getSituacaoDeVida();
             
@@ -682,92 +709,75 @@ public class Jogo implements Serializable{
                 alvo = p;
             }
         }
-        
+
         return alvo;
     }    
     /**
      * Define o alvo a ser atacado como o alvo mais fraco.
      * 
      * @param lutador lutador na lista de lutadores da batalha
-     * @return int com a posicao do alvo a ser atacado
+     * @return Personagem alvo
      */
     private Personagem definirAlvoMaisForte(Personagem lutador) {
         //Faz uma lista de todos os alvos possíveis do atacante
         List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(lutador);
-        
+        System.out.println("asdf");
         //Percorre a lista verificando qual é o alvo com menor dano
-        int menorDano = alvos.get(0).getDanoRecebido();
-        Personagem alvo = null;
+        Personagem alvo = alvos.get(0);
+        int menorDano = alvo.getDanoRecebido();
         for (Personagem p : alvos) {
             if (menorDano > p.getDanoRecebido()) {
                 menorDano = p.getDanoRecebido();
                 alvo = p;
             }
         }
-        
+
         return alvo;
     }
+    /**
+     * Define um golpe aleatorio do lutador
+     * 
+     * @param lutador lutador na lista de lutadores da batalha
+     * @return Golpe aleatorio
+     */
     private Golpe definirGolpeNoAlvo(Personagem lutador){
         List<Golpe> lista = lutador.getGolpes();
         Random random = new Random();
         return lista.get(random.nextInt(lista.size()));
     }
-    
-    
-    
-    /**
-     * Aciona a acao atacar do lutador na posicao posAtacante e seleciona como alvo
-     * deste ataque o lutador com o nome de alvoNome
-     * 
-     * @param posAtacante int com a posicao do lutador atacante na lista de todos os lutadores
-     * @param nomeAlvo String com o nome do alvo
-     * @param golpe String com o nome do golpe sendo executado
-     * @return String dizendo oque aconteceu no ataque
-     */
-    public String lutadorAtacaAlvo(Personagem atacante, String nomeAlvo, String golpe){
-        
-        List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(atacante);
-        
-        Personagem alvo = null;
-        for(int i = 0; i < alvos.size(); i++){
-            if(nomeAlvo.equals(alvos.get(i).getNome()))
-                alvo = alvos.get(i);
-        }
-        
-        return atacante.atacar(alvo,atacante.getGolpePeloNome(golpe));
-    }
-    
-    
-    
-    
-    
+       
 
     
     
-    //TURNOS
+    //OUTROS
     
     /**
      * Passa o turno da batalha
-     * @return String dizendo oque ocorreu
      */
-    public String passarTurno(){
+    public void passarTurno(){
         List<Personagem> list = batalhaAtual.getLutadores();
-        //reinicio os pontos de acao para o proximo turno //ativo os xbuffs
-        String relatorio = "Aconteceu na passagem de turnos:\n";
+        //reinicio os pontos de acao para o proximo turno
         for(Personagem l : list){
             l.resetarPontosDeAcao();
         }
         batalhaAtual.passarTurno();
-        return relatorio;
     }
     
     /**
-     * Retorna o turno atual
-     * 
-     * @return int com o turno atual
+     * Aumenta a pontuacao em um ponto, deve ser usado apos uma vitoria de batalha
      */
-    public int getTurno(){
-        return batalhaAtual.getTurno();
+    public void ganharPonto(){
+        pontuacao++;
     }
     
+    /**
+     * Retorna o vencedor da batalha atual
+     * 
+     * @return String dizendo quem venceu
+     */
+    public String getVencedores(){
+        if(!batalhaAtual.verificaSeBatalhaAcabou())
+            return "A Batalha ainda não acabou.";
+        return batalhaAtual.getVencedores();
+    }
 }

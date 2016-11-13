@@ -42,17 +42,12 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
                 + "1-Nada 2-Leve 3-Pesada");
         String armadura = scan.next();
         
-        /*String[] heroi = {nome,
+        String[] heroi = {nome,
             String.valueOf(Integer.parseInt(classe) - 1),
             String.valueOf(Integer.parseInt(foco) - 1),
             String.valueOf(Integer.parseInt(arma) - 1),
-            String.valueOf(Integer.parseInt(armadura) - 1)};*/
+            String.valueOf(Integer.parseInt(armadura) - 1)};
         
-        String[] heroi = {nome,
-            "1",
-            "0",
-            "1",
-            "1"};
         return heroi;
     }
     
@@ -62,11 +57,12 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
      * @return retorna 1-sim 2-nao
      */
     @Override
-    public int confirmarSeTemMaisHerois(){
+    public int confirmarSeTemMaisHerois()
+    {
         Scanner scan = new Scanner (System.in);
         System.out.println("Adicao do personagem no time dos herois encerrada, deseja adicionar mais personagens ao time de herois:\n"
                 + "1-Sim 2-Nao");
-        return /*scan.nextInt()*/2;  
+        return scan.nextInt();  
     }
     
     /**
@@ -150,8 +146,8 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     }
     
     @Override
-    public void exibindoTurnoAtual(){
-        System.out.println("[turno " + rpg.getTurno() + "]");
+    public void exibindoTurnoAtual(int turno){
+        System.out.println("[turno " + turno + "]");
     }
     
     @Override
@@ -166,22 +162,22 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     }
     
     @Override
-    public void encerramentoDaBatalha(){
+    public void encerramentoDaBatalha(String vencedores){
         System.out.println("A batalha acabou!");
-        System.out.println("Vencedores: " + rpg.getVencedores());
+        System.out.println("Vencedores: " + vencedores);
     }
     
     @Override
-    public void exibirFim(){
-        System.out.println("Pontuacao Final: " + rpg.getPontuacao());
+    public void exibirFim(int pontuacao){
+        System.out.println("Pontuacao Final: " + pontuacao);
     }
     
     @Override
     public int escolhendoAcao(String[] inf){
         String aux = "Escolha sua ação " + inf[0] + ", voce tem " + inf[1] + " pontos de acao restantes: 1-Atacar ";
-        if(!inf[2].isEmpty())
+        if(inf[2].isEmpty())
             aux += "2-Defender ";
-        if(!inf[2].isEmpty())
+        if(inf[2].isEmpty())
             aux += "3-Esquivar ";
         aux += "5-Passar vez 6-Pedir para exibir status dos personagens";
         System.out.println(aux);
@@ -210,11 +206,11 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
             alvoNumero = scan.nextInt();
 
             // verifico se o numero é valido, ou seja, esta dentro das opcoes disponiveis
-            if(alvoNumero < 1 || alvoNumero > cont){
+            if(!(alvoNumero < 1 || alvoNumero > cont)){
                 nomeInvalido = false;
             }
             if(nomeInvalido){// se o nomeInvalido ainda estiver verdadeiro entao deu erro
-                System.out.println("Nome inválido, digite denovo.");
+                System.out.println("Numero inválido, digite denovo.");
             }
         }
         
@@ -242,12 +238,12 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         int golpeNumero = 0;
         while(golpeInvalido){
             System.out.println ();
-            System.out.print("Nome do golpe: ");
+            System.out.print("Numero do golpe: ");
             Scanner scan = new Scanner (System.in);
             golpeNumero = scan.nextInt();
 
             // verifico se o golpe é valido, ou seja, esta dentro das opcoes disponiveis
-            if(golpeNumero < 1 || golpeNumero > cont){
+            if(!(golpeNumero < 1 || golpeNumero > cont)){
                 golpeInvalido = false;
             }
             if(golpeInvalido){// se o golpeInvalido ainda estiver verdadeiro entao deu erro

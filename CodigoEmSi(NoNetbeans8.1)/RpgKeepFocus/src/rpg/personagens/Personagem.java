@@ -233,7 +233,7 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         //cobro o custo
         pontosDeAcao -= custoDaAcao;
         
-        String relatorio = getNome() + " atacou " + alvo.getNome() + " usando " + golpe;
+        String relatorio = getNome() + " atacou " + alvo.getNome() + " usando " + golpe.getNome();
         
         //verifico se o alvo consegue esquivar
         if(alvo.tentarEsquivar()){
