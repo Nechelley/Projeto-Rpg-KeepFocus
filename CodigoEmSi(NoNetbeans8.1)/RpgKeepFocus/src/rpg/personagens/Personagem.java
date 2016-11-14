@@ -1,5 +1,11 @@
 package rpg.personagens;
 
+import rpg.personagens.enums.Arma;
+import rpg.personagens.enums.Armadura;
+import rpg.personagens.enums.SituacaoDeVida;
+import rpg.personagens.enums.Classe;
+import rpg.personagens.enums.Foco;
+import rpg.personagens.enums.Estado;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -393,7 +399,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
         return (classe == Classe.MAGO ||
                 classe == Classe.CLERIGO||
                 classe == Classe.CULTISTA ||
-                classe == Classe.DRAGAO);
+                classe == Classe.DRAGAO ||
+                classe == Classe.INCENDIARIO);
     }
     
     /**
@@ -581,6 +588,33 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             }
         }
         return false;
+    }
+    
+    /**
+     * Verifica se o personagem ainda tem alguma execucao que possa fazer
+     * 
+     * @return Uma concatenacao de : "podeDefender" se pode defender, "podeEsquivar" se pode esquivar, 
+     * "podeDarGolpe" se existe algum golpe que pode ser executado, retorna vazio caso 
+     * nao possa fazer nada
+     */
+    public String getAindaPodeExecutarAlgumaAcao(){
+        String inf = "";
+
+        
+        //verifico se pode defender ou esquivar, 
+        if(pontosDeAcao != 0){
+            if(!getEstaDefendendo())
+                inf += "podeDefender";
+            if(!getEstaEsquivando() && foco == Foco.DESTREZA)
+                inf += "podeEsquivar";
+            //verifico se tem alguma golpe que pode fazer
+            for(Golpe g : golpes)
+                if(g.getCustoDeAcao() <= pontosDeAcao)
+                    inf += "podeDarGolpe";
+        }
+        
+        
+        return inf;
     }
     
     /**

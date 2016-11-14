@@ -175,9 +175,9 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     @Override
     public int escolhendoAcao(String[] inf){
         String aux = "Escolha sua ação " + inf[0] + ", voce tem " + inf[1] + " pontos de acao restantes: 1-Atacar ";
-        if(inf[2].isEmpty())
+        if(!inf[2].isEmpty())
             aux += "2-Defender ";
-        if(inf[2].isEmpty())
+        if(!inf[3].isEmpty())
             aux += "3-Esquivar ";
         aux += "5-Passar vez 6-Pedir para exibir status dos personagens";
         System.out.println(aux);

@@ -1,7 +1,7 @@
 package rpg.golpes;
 
 import rpg.excecoes.InfInvalidoException;
-import rpg.personagens.Arma;
+import rpg.personagens.enums.Arma;
 
 /**
  * Golpe do tipo ataque basico, pois depende so da arma e do lancamento do dado

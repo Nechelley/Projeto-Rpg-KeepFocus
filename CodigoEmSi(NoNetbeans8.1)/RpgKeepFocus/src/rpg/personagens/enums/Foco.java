@@ -1,4 +1,4 @@
-package rpg.personagens;
+package rpg.personagens.enums;
 
 /**
  * Representa um atributo (o foco) do personagem:

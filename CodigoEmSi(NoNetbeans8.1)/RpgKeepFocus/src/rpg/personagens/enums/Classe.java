@@ -1,9 +1,10 @@
-package rpg.personagens;
+package rpg.personagens.enums;
 
 /**
  * Representa um atributo (a classe) do personagem:
  * 0-Guerreiro ou 1-Mago ou 2-Clerigo ou 3-Zumbi ou 4-Esqueleto ou 
- * 5-Dragao ou 6-Goblin ou 7-Cultista ou 8-Ogro
+ * 5-Dragao ou 6-Goblin ou 7-Cultista ou 8-Ogro ou 9-Big ou 
+ * 10-Marrento ou 11- Incendiario ou 12-Chefe
  * 
  * @author Nechelley Alves
  */

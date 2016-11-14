@@ -1,43 +1,43 @@
-package rpg.personagens;
+package rpg.personagens.enums;
 
 /**
  * Representa um atributo (a armadura) do personagem:
- * 0-Nada ou 1-Leve ou 2-Pesada
+ * 0-Pequena ou 1-Media ou 2-Grande
  * 
  * @author Nechelley Alves
  */
-public enum Armadura {
-    NADA(0,"Nada",0),LEVE(1,"Leve",1),PESADA(2,"Pesada",2);
+public enum Arma {
+    PEQUENA(0,"Pequena",0),MEDIA(1,"Média",1),GRANDE(2,"Grande",2);
     
     private final int id;
     private final String nome;
     private final int valor;
     
-    private Armadura(int id, String nome,int valor){
+    private Arma(int id, String nome, int valor){
         this.id = id;
         this.nome = nome;
-        this.valor= valor;
+        this.valor = valor;
     }
     
     /**
-     * Retorna a Armadura passando um id
+     * Retorna a Arma passando um id
      * 
-     * @param id int com o numero de identificacao da armadura
-     * @return Armadura procurado, ou null caso nao encontre
+     * @param id int com o numero de identificacao da arma
+     * @return Arma procurada, ou null caso nao encontre
      */
-    public static Armadura getArmaduraPorId(int id){
+    public static Arma getArmaPorId(int id){
         if(id > 2 || id < 0)
             return null;
-        Armadura a = null;
+        Arma a = null;
         switch (id) {
             case 0:
-                a = Armadura.NADA;
+                a = Arma.PEQUENA;
                 break;
             case 1:
-                a = Armadura.LEVE;
+                a = Arma.MEDIA;
                 break;
             case 2:
-                a = Armadura.PESADA;
+                a = Arma.GRANDE;
                 break;
             default:
                 break;
@@ -46,21 +46,21 @@ public enum Armadura {
     }
     
     /**
-     * @return Int com o id da armadura
+     * @return Int com o id da arma
      */
     public int getId(){
         return id;
     }
     
     /**
-     * @return String com o nome do tipo da armadura
+     * @return String com o nome do tipo da arma
      */
     public String getString(){
         return nome;
     }
     
     /**
-     * @return Int com o valor da armadura
+     * @return Int com o valor da força da arma
      */
     public int getValor(){
         return valor;

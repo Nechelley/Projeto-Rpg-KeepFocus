@@ -1,4 +1,4 @@
-package rpg.personagens;
+package rpg.personagens.enums;
 
 /**
  * Representa o estado de um personagem que pode estar em estado de:

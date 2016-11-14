@@ -1,5 +1,10 @@
 package rpg.personagens;
 
+import rpg.personagens.enums.Arma;
+import rpg.personagens.enums.Armadura;
+import rpg.personagens.enums.Classe;
+import rpg.personagens.enums.Foco;
+
 /**
  * Uma classe de Inimigo 
  * 

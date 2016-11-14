@@ -1,4 +1,4 @@
-package rpg.personagens;
+package rpg.personagens.enums;
 
 /**
  * Representa as condicoes de vida que o personagem pode estar, com base no dano recebido

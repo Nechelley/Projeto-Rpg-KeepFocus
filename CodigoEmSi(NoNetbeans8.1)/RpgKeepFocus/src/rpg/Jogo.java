@@ -4,24 +4,17 @@ import rpg.batalhas.Batalha;
 import rpg.excecoes.AcaoInvalidaException;
 import rpg.excecoes.InfInvalidoException;
 import java.io.Serializable;
-import rpg.personagens.Dragao;
-import rpg.personagens.Ogro;
-import rpg.personagens.Inimigo;
-import rpg.personagens.Zumbi;
-import rpg.personagens.Esqueleto;
-import rpg.personagens.Cultista;
-import rpg.personagens.Personagem;
-import rpg.personagens.Heroi;
-import rpg.personagens.Goblin;
+import rpg.personagens.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import rpg.golpes.Golpe;
-import rpg.personagens.Arma;
-import rpg.personagens.Armadura;
-import rpg.personagens.Classe;
-import rpg.personagens.Foco;
-import rpg.personagens.SituacaoDeVida;
+import rpg.personagens.Chefe;
+import rpg.personagens.enums.Arma;
+import rpg.personagens.enums.Armadura;
+import rpg.personagens.enums.Classe;
+import rpg.personagens.enums.Foco;
+import rpg.personagens.enums.SituacaoDeVida;
 
 /**
  *
@@ -124,8 +117,10 @@ public class Jogo implements Serializable{
 
                     //neste ponto verifico se o lutador é um Inimigo e ativo a IA se necessario
                     if(!lutador.getEhHeroi()){
-                        relatorio = executarIA(lutador);
-                        tela.exibindoRelatorio(relatorio);
+                        do{
+                            relatorio = executarIA(lutador);
+                            tela.exibindoRelatorio(relatorio);
+                        }while(!lutador.getAindaPodeExecutarAlgumaAcao().isEmpty());
                         
                         if(batalhaAtual.verificaSeBatalhaAcabou()){
                             //se entrou neste if quer dizer que a batlaha acabou no turno de um inimigo, portanto os herois perderam
@@ -478,13 +473,12 @@ public class Jogo implements Serializable{
         //escolhendo inimigos
         List<Personagem> inimigos = new ArrayList<Personagem>();
         
-        Random aleatorio = new Random();
-        //Adiciona um número de inimigos na lista
+        //Adiciona inimigos na lista
         do{
-            int pos = aleatorio.nextInt(Inimigo.numDeClassesDeInimigos());
-            if(pos < 0 || pos > Inimigo.numDeClassesDeInimigos() -1)
-                throw new IndexOutOfBoundsException("Posição " + pos + " não existe em inimigos.");
-            inimigos.add(adicionarInimigo(pos));
+            Inimigo i = adicionarInimigo();
+            if(i == null)
+                break;
+            inimigos.add(i);
         }while (habilidadeDoTimeDeInimigos < habilidadeDoTimeDeHerois);
         
         if (inimigos.isEmpty())
@@ -499,60 +493,85 @@ public class Jogo implements Serializable{
      * @param id Int com o índice do inimigo na lista
      * @return Inimigo a ser adicionado
      */
-    private Inimigo adicionarInimigo(int id) {
+    private Inimigo adicionarInimigo() {
+        //inicializando
         Inimigo i = null;
         Random aleatorio = new Random();
         Arma arma = null;
         Armadura armadura = null;
-        Foco pontoForte = Foco.getFocoPorId(aleatorio.nextInt(4));
+        Foco foco = Foco.getFocoPorId(aleatorio.nextInt(4));
+        int id = aleatorio.nextInt(Inimigo.numDeClassesDeInimigos());
+        
         switch (id) {
-            case 0:
+            case 0://GOBLIN
                 arma = Arma.getArmaPorId(aleatorio.nextInt(2));
-                armadura = Armadura.getArmaduraPorId(0);
-                i = new Goblin(pontoForte,arma,armadura);
+                armadura = Armadura.NADA;
+                i = new Goblin(foco,arma,armadura);
                 i.addGolpeFisico("Facada");
                 break;
-            case 1:
-                arma = Arma.getArmaPorId(aleatorio.nextInt(2));
-                armadura = Armadura.getArmaduraPorId(0);
-                i = new Cultista(pontoForte,arma,armadura);
-                i.addGolpeFisico("Facada");
-                i.addGolpeMagicoMeteoro("Invocacao");
-                break;
-            case 2:
-                arma = Arma.getArmaPorId(aleatorio.nextInt(3));
+            case 1://CULTISTA
+                arma = Arma.MEDIA;
                 armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(2));
-                i = new Dragao(pontoForte,arma,armadura);
+                i = new Cultista(foco,arma,armadura);
+                i.addGolpeFisico("Facada");
+                i.addGolpeMagicoMeteoro("Invocacao meteorica");
+                i.addGolpeMagicoNevasca("Nevasca mortal");
+                break;
+            case 2://DRAGAO
+                arma = Arma.getArmaPorId(aleatorio.nextInt(2) + 1);
+                armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(2) + 1);
+                i = new Dragao(foco,arma,armadura);
                 i.addGolpeFisico("Garras");
                 i.addGolpeMagicoBolaDeFogo("Bola de fogo");
                 break;
-            case 3:
-                arma = Arma.getArmaPorId(aleatorio.nextInt(3));
-                armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(2));
-                i = new Ogro(pontoForte,arma,armadura);
+            case 3://OGRO
+                arma = Arma.GRANDE;
+                armadura = Armadura.NADA;
+                i = new Ogro(foco,arma,armadura);
                 i.addGolpeFisico("Machadada");
                 break;
-            case 4:
+            case 4://ESQUELETO
                 arma = Arma.getArmaPorId(aleatorio.nextInt(2));
-                armadura = Armadura.getArmaduraPorId(0);
-                i = new Esqueleto(pontoForte,arma,armadura);
+                armadura = Armadura.getArmaduraPorId(2);
+                i = new Esqueleto(foco,arma,armadura);
                 i.addGolpeFisico("Espadada");
                 break;
-            case 5:
+            case 5://ZUMBI
                 arma = Arma.getArmaPorId(aleatorio.nextInt(2));
-                armadura = Armadura.getArmaduraPorId(0);
-                i = new Zumbi(pontoForte,arma,armadura);
+                armadura = Armadura.NADA;
+                i = new Zumbi(foco,arma,armadura);
                 i.addGolpeFisico("Arranhao");
                 break;
-            default:
-                /*
-                    ARRUMAR DEPOIS PARA TER TODOS OS INIMIGOS
-                
-                */
+            case 6://CHEFE
                 arma = Arma.getArmaPorId(aleatorio.nextInt(2));
-                armadura = Armadura.getArmaduraPorId(0);
-                i = new Zumbi(pontoForte,arma,armadura);
-                i.addGolpeFisico("Arranhao");
+                armadura = Armadura.PESADA;
+                i = new Chefe(foco,arma,armadura);
+                i.addGolpeFisico("Soco fatal");
+                break;
+            case 7://MARRENTO
+                arma = Arma.getArmaPorId(aleatorio.nextInt(2) + 1);
+                armadura = Armadura.NADA;
+                i = new Marrento(foco,arma,armadura);
+                i.addGolpeFisico("Soco forte");
+                break;
+            case 8://INCENDIARIO
+                arma = Arma.PEQUENA;
+                armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(2) + 1);
+                i = new Incendiario(foco,arma,armadura);
+                i.addGolpeFisico("Coronhada");
+                i.addGolpeMagicoBolaDeFogo("Chamas gritantes");
+                break;
+            case 9://BIG
+                arma = Arma.getArmaPorId(aleatorio.nextInt(2));
+                armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(3));
+                i = new Big(foco,arma,armadura);
+                i.addGolpeFisico("Pancada");
+                break; 
+            default://caso esquecam de colocar uma nova classe de inimigo aqui, defino criacao default
+                arma = Arma.getArmaPorId(aleatorio.nextInt(2));
+                armadura = Armadura.getArmaduraPorId(2);
+                i = new Zumbi(foco,arma,armadura);
+                i.addGolpeFisico("Soco");
                 break;
         }
         
@@ -585,93 +604,156 @@ public class Jogo implements Serializable{
      * @return String dizendo oque aconteceu na acao
      */
     public String executarIA(Personagem lutador){
-        Classe classeLutador = lutador.getClasse();
-        SituacaoDeVida situacaoLutador = lutador.getSituacaoDeVida();
-        Personagem alvo = null;
+        //verifico se o lutador pode fazer algo
+        String podeFazer = lutador.getAindaPodeExecutarAlgumaAcao();
         
-        if (situacaoLutador == SituacaoDeVida.SAUDAVEL) {
-            //Define a estratégia de luta de acordo com o lutador
-            switch(classeLutador){
-                case DRAGAO:
-                    alvo = definirAlvoMaisForte(lutador);
-                    break;
-                case OGRO:
-                case GOBLIN:
-                    if (lutador.rodarDado() > 5) {
-                        return defender(lutador);
-                    } else {
-                        alvo = definirAlvoMaisFraco(lutador);
-                    }
-                    break;
-                default:
-                    if (lutador.rodarDado() > 4) {
-                        return defender(lutador);
-                    } else {
-                        alvo = definirAlvoAleatorio(lutador);
-                    }
-                    break;
-            }
-        } else if (situacaoLutador == SituacaoDeVida.ATORDOADO) {
-            switch (classeLutador) {
-                case DRAGAO:
-                    int chance = lutador.rodarDado();
-                    if (chance == 6)
-                        return defender(lutador);
-                    else if (chance > 2)
-                        alvo = definirAlvoMaisForte(lutador);
-                    else
-                        alvo = definirAlvoAleatorio(lutador);
-                    break;
-                case OGRO:
-                case GOBLIN:
-                    if (lutador.rodarDado() > 3)
-                        alvo = definirAlvoMaisForte(lutador);
-                    else
-                        alvo = definirAlvoAleatorio(lutador);
-                    break;
-                default:
-                    if (lutador.rodarDado() > 4) {
-                        return defender(lutador);
-                    } else {
-                        alvo = definirAlvoAleatorio(lutador);
-                    }
-                    break;
-            }
-        } else {
-            switch (classeLutador) {
-                case DRAGAO:
-                    if (lutador.rodarDado() > 4)
-                        alvo = definirAlvoMaisForte(lutador);
-                    else
-                        alvo = definirAlvoAleatorio(lutador);
-                    break;
-                case OGRO:
-                    if (lutador.rodarDado() == 6)
-                        alvo = definirAlvoMaisForte(lutador);
-                    else
-                        alvo = definirAlvoAleatorio(lutador);
-                    break;
-                case GOBLIN:
-                    int chance = lutador.rodarDado();
-                    if (chance == 6)
-                        alvo = definirAlvoMaisForte(lutador);
-                    else if (chance > 3)
-                        return defender(lutador);
-                    else
-                        alvo = definirAlvoAleatorio(lutador);
-                    break;
-                default:
-                    if (lutador.rodarDado() > 2) {
-                        return defender(lutador);
-                    } else {
-                        alvo = definirAlvoAleatorio(lutador);
-                    }
-                    break;
-            }
-        }
+        if(podeFazer.isEmpty())
+            return "Nada a fazer.";
 
-       return lutadorAtacaAlvo(lutador,alvo.getNome(),definirGolpeNoAlvo(lutador).getNome());
+        //escolho a acao
+        switch(lutador.getClasse()){
+            case ZUMBI:
+            case GOBLIN:
+                if(podeFazer.contains("podeDarGolpe"))
+                    return lutadorAtacaAlvo(lutador,
+                        definirAlvoAleatorio(lutador).getNome(),
+                        definirGolpeNoAlvo(lutador).getNome());
+                if(podeFazer.contains("podeDefender"))
+                    return defender(lutador);
+                return esquivar(lutador);
+                
+            case ESQUELETO:
+                if(podeFazer.contains("podeDefender"))
+                    return defender(lutador);
+                if(podeFazer.contains("podeDarGolpe"))
+                    if(lutador.getSituacaoDeVida() == SituacaoDeVida.DESESPERADO)
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoAleatorio(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                    else
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoMaisFraco(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                return esquivar(lutador);
+                
+            case DRAGAO:
+                if(lutador.getSituacaoDeVida() == SituacaoDeVida.DESESPERADO){
+                    if(podeFazer.contains("podeDarGolpe"))
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoAleatorio(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                    if(podeFazer.contains("podeDefender"))
+                        return defender(lutador);
+                    return esquivar(lutador);
+                }
+                else{
+                    if(podeFazer.contains("podeDarGolpe"))
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoMaisForte(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                    if(podeFazer.contains("podeEsquivar"))
+                        return esquivar(lutador);
+                    return defender(lutador);
+                }
+                
+            case CULTISTA:
+                if(podeFazer.contains("podeEsquivar"))
+                    return esquivar(lutador);
+                if(podeFazer.contains("podeDefender"))
+                    return defender(lutador);
+                return lutadorAtacaAlvo(lutador,
+                    definirAlvoAleatorio(lutador).getNome(),
+                    definirGolpeNoAlvo(lutador).getNome());
+                
+            case OGRO:
+            case BIG:
+                int dado = lutador.rodarDado();
+                if(podeFazer.contains("podeDarGolpe") && dado != 1)
+                    return lutadorAtacaAlvo(lutador,
+                        definirAlvoMaisForte(lutador).getNome(),
+                        definirGolpeNoAlvo(lutador).getNome());
+                else
+                    if(dado == 1)
+                        return lutadorAtacaAlvo(lutador,
+                        definirAlvoMaisFraco(lutador).getNome(),
+                        definirGolpeNoAlvo(lutador).getNome());
+                if(podeFazer.contains("podeDefender"))
+                    return defender(lutador);
+                return esquivar(lutador);
+                
+            case MARRENTO:
+                if(lutador.rodarDado() > 4){
+                    if(podeFazer.contains("podeDarGolpe") && 
+                            lutador.getSituacaoDeVida() == SituacaoDeVida.DESESPERADO)
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoMaisForte(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                    else
+                        if(lutador.getSituacaoDeVida() != SituacaoDeVida.DESESPERADO)
+                            return lutadorAtacaAlvo(lutador,
+                                definirAlvoMaisFraco(lutador).getNome(),
+                                definirGolpeNoAlvo(lutador).getNome());
+                    if(podeFazer.contains("podeEsquivar"))
+                        return esquivar(lutador);
+                    return defender(lutador);
+                }
+                else{
+                    if(podeFazer.contains("podeDefender"))
+                        return defender(lutador);
+                    if(podeFazer.contains("podeDarGolpe"))
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoAleatorio(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                    return esquivar(lutador);
+                }
+                    
+            case INCENDIARIO:
+                if(podeFazer.contains("podeDarGolpe"))
+                    return lutadorAtacaAlvo(lutador,
+                            definirAlvoMaisFraco(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                if(lutador.rodarDado() > 4){
+                    if(podeFazer.contains("podeDefender"))
+                        return defender(lutador);
+                    return esquivar(lutador);
+                }
+                else{
+                    if(podeFazer.contains("podeEsquivar"))
+                        return esquivar(lutador);
+                    return defender(lutador);
+                }
+                
+            case CHEFE:
+                if(lutador.getSituacaoDeVida() == SituacaoDeVida.ATORDOADO){
+                    if(podeFazer.contains("podeDarGolpe"))
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoAleatorio(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                    if(podeFazer.contains("podeDefender"))
+                        return defender(lutador);
+                    return esquivar(lutador);
+                }
+                else{
+                    if(podeFazer.contains("podeDarGolpe"))
+                        return lutadorAtacaAlvo(lutador,
+                            definirAlvoMaisForte(lutador).getNome(),
+                            definirGolpeNoAlvo(lutador).getNome());
+                    if(podeFazer.contains("podeEsquivar"))
+                        return esquivar(lutador);
+                    return defender(lutador);
+                }
+                
+            default://caso esquecam de colocar uma nova classe de inimigo aqui, defino acoes default
+                if(podeFazer.contains("podeDarGolpe"))
+                    return lutadorAtacaAlvo(lutador,
+                        definirAlvoAleatorio(lutador).getNome(),
+                        definirGolpeNoAlvo(lutador).getNome());
+                if(podeFazer.contains("podeEsquivar"))
+                    return esquivar(lutador);
+                return defender(lutador);
+        }
     }
+        
     
     /**
      * Define um alvo aleatório a ser atacado.
@@ -721,7 +803,7 @@ public class Jogo implements Serializable{
     private Personagem definirAlvoMaisForte(Personagem lutador) {
         //Faz uma lista de todos os alvos possíveis do atacante
         List<Personagem> alvos = batalhaAtual.getPossiveisAlvos(lutador);
-        System.out.println("asdf");
+        
         //Percorre a lista verificando qual é o alvo com menor dano
         Personagem alvo = alvos.get(0);
         int menorDano = alvo.getDanoRecebido();
@@ -738,12 +820,27 @@ public class Jogo implements Serializable{
      * Define um golpe aleatorio do lutador
      * 
      * @param lutador lutador na lista de lutadores da batalha
-     * @return Golpe aleatorio
+     * @return Golpe aleatorio, ou null caso n tenha golpe disponivel para o lutador
      */
     private Golpe definirGolpeNoAlvo(Personagem lutador){
+        if(!lutador.getAindaPodeExecutarAlgumaAcao().contains("podeDarGolpe"))
+            return null;
+        
         List<Golpe> lista = lutador.getGolpes();
         Random random = new Random();
-        return lista.get(random.nextInt(lista.size()));
+        
+        int tam = lista.size();
+        int aleatorio = random.nextInt(tam);
+        Golpe g = lista.get(aleatorio);
+        while(g.getCustoDeAcao() > lutador.getPontosDeAcao()){
+            aleatorio++;
+            
+            if(aleatorio > tam)
+                aleatorio = 0;
+            
+            g = lista.get(aleatorio);
+        }
+        return g;
     }
        
 
