@@ -7,34 +7,27 @@ package rpg;
 public interface ObservadorJogo {
     
     String[] lendoHeroi();
-    
     int confirmarSeTemMaisHerois();
     
     String[] lendoGolpe();
-    
     public int confirmarSeTemMaisGolpesDeHerois();
     
     void iniciandoRodadaDeBatalhas();
-    
     void apresentandoInimigos(String[][] inf);
-    
     void iniciandoTurnos();
-    
-    void exibindoInformacoesResumidasDeTodosOsLutadores(String[][] inf);
-    
     void exibindoTurnoAtual(int turno);
     
-    void antesDeExibirVezDoLutador(String lutadorNome);
+    void exibindoVezDoLutador(String lutadorNome);
+    
+    void exibindoSituacaoDosPersonagens(String[][] inf);
     
     void exibindoRelatorio(String relatorio);
     
-    void encerramentoDaBatalha(String vencedores);
-    
-    void exibirFim(int pontuacao);
+    void encerramentoDaBatalha(String vencedores, int pontuacao);
     
     int escolhendoAcao(String[] inf);
-    
     String escolhendoAlvo(String[] inf);
-    
     String escolhendoGolpe(String[][] inf);
+    
+    boolean querJogarOutraPartida();
 }

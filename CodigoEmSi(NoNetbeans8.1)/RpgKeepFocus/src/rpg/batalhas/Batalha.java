@@ -218,7 +218,7 @@ public class Batalha implements Serializable{
      * @return Boolean onde (true)-a batalha acabou e alguem ganhou ou 
      * (false) caso contrario
      */
-    public boolean verificaSeBatalhaAcabou(){
+    public boolean batalhaAcabou(){
         //numero de herois mortos
         int mortosH = 0;
         //numero de inimigos mortos

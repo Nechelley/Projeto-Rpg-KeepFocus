@@ -1,9 +1,12 @@
 package rpg.personagens;
 
+import java.util.ArrayList;
 import rpg.personagens.enums.Arma;
 import rpg.personagens.enums.Armadura;
 import rpg.personagens.enums.Classe;
+import rpg.personagens.enums.Estado;
 import rpg.personagens.enums.Foco;
+import rpg.personagens.enums.SituacaoDeVida;
 
 /**
  * Representa um heroi, que é o tipo de personagem que o jogador cria 

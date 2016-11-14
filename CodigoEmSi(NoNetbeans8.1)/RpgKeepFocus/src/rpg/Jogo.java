@@ -87,10 +87,10 @@ public class Jogo implements Serializable{
             tela.iniciandoTurnos();
 
             // situaçao de todos os personagens
-            tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
+            tela.exibindoSituacaoDosPersonagens(matrizLutadores());
              
             //inicio do loop da batalha atual
-            while(!batalhaAtual.verificaSeBatalhaAcabou()){//enquanto a batalha estiver ocorrendo, ou seja, nao acabou
+            while(!batalhaAtual.batalhaAcabou()){//enquanto a batalha estiver ocorrendo, ou seja, nao acabou
                 
                 tela.exibindoTurnoAtual(batalhaAtual.getTurno());
                             
@@ -104,7 +104,7 @@ public class Jogo implements Serializable{
                     Personagem lutador = batalhaAtual.getLutadores().get(i);
                     String nomeLutador = lutador.getNome();
                     
-                    tela.antesDeExibirVezDoLutador(nomeLutador);
+                    tela.exibindoVezDoLutador(nomeLutador);
                     
                     //verifico se o lutador esta em condicao de lutar
                     if(lutador.getSituacaoDeVida() == SituacaoDeVida.INCONSCIENTE || 
@@ -120,17 +120,16 @@ public class Jogo implements Serializable{
                         do{
                             relatorio = executarIA(lutador);
                             tela.exibindoRelatorio(relatorio);
-                        }while(!lutador.getAindaPodeExecutarAlgumaAcao().isEmpty());
+                        }while(!lutador.getAindaPodeExecutarAlgumaAcao().isEmpty() && !batalhaAtual.batalhaAcabou());
                         
-                        if(batalhaAtual.verificaSeBatalhaAcabou()){
+                        if(batalhaAtual.batalhaAcabou()){
                             //se entrou neste if quer dizer que a batlaha acabou no turno de um inimigo, portanto os herois perderam
                             flagDoTurno = false;
-                            tela.encerramentoDaBatalha(getVencedores());
+                            tela.encerramentoDaBatalha(getVencedores(), pontuacao);
                             encerrarJogo();
-                            tela.exibirFim(pontuacao);
                         }else
                             // situaçao de todos os personagens
-                            tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
+                            tela.exibindoSituacaoDosPersonagens(matrizLutadores());
                         continue;
                     }
                     
@@ -138,22 +137,39 @@ public class Jogo implements Serializable{
                     escolherAcao(lutador);
                     
                     //escrever o que aconteceu, como se desenrolou a acao
-                    if(batalhaAtual.verificaSeBatalhaAcabou()){
+                    if(batalhaAtual.batalhaAcabou()){
                         flagDoTurno = false;
-                        tela.encerramentoDaBatalha(getVencedores());
                         ganharPonto();
-                        tela.exibirFim(pontuacao);
-
+                        tela.encerramentoDaBatalha(getVencedores(),pontuacao);
                     }else{
                         // situaçao de todos os personagens
-                        tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
+                        tela.exibindoSituacaoDosPersonagens(matrizLutadores());
                     }
-                    
                 }//fecha loop do Turno
                 
-                if (!batalhaAtual.verificaSeBatalhaAcabou())
+                if (!batalhaAtual.batalhaAcabou())
                     passarTurno();
             }//fecha loop da batalha
+            
+            //reseto os pontos de acao dos herois
+            for(Personagem h : timeDosHerois){
+                h.resetarPontosDeAcao();
+            }         
+            
+            //verifico se ele quer jogar outra partida
+            if(!getVencedores().equals("Herois"))//garanto que a mensagem apareca apenas se o herois perderem
+                if(tela.querJogarOutraPartida()){//se ele quiser jogar outra partida
+                    //reseto os herois
+                    for(Personagem h : timeDosHerois){
+                        h.resetarStatus();
+                    }
+                    for(Personagem p : batalhaAtual.getLutadores()){
+                        if(p instanceof Inimigo)
+                            p.diminuiNumInstancias();
+                    }
+                        
+                    situacaoDoJogo = SituacaoDoJogo.BATALHASCOMECARAM;
+                }
         }//fecha loop do jogo
     }
     
@@ -360,12 +376,7 @@ public class Jogo implements Serializable{
             switch(acao){
                 // Ataque
                 case 1:
-                    try{
-                        relatorio = atacar(lutador);
-                    }
-                    catch(AcaoInvalidaException e){
-                        relatorio = e.getMessage() + " " + e.getMotivo();
-                    }
+                    relatorio = atacar(lutador);
                     break;
                 // Defender
                 case 2:
@@ -380,14 +391,14 @@ public class Jogo implements Serializable{
                     flagPersonagem = false;//sai do loop de personagens
                     break;
                 case 6:
-                    tela.exibindoInformacoesResumidasDeTodosOsLutadores(matrizLutadores());
+                    tela.exibindoSituacaoDosPersonagens(matrizLutadores());
                     break;
                 default:
                     relatorio = " Acão inválida!"; 
             }//fecha switch(acao)
             tela.exibindoRelatorio(relatorio);
             
-            if(lutador.getPontosDeAcao() == 0 || batalhaAtual.verificaSeBatalhaAcabou())
+            if(lutador.getAindaPodeExecutarAlgumaAcao().isEmpty() || batalhaAtual.batalhaAcabou())
                 flagPersonagem = false;//sai do loop de personagens
         }///fecha loop do Personagem
     }
@@ -873,7 +884,7 @@ public class Jogo implements Serializable{
      * @return String dizendo quem venceu
      */
     public String getVencedores(){
-        if(!batalhaAtual.verificaSeBatalhaAcabou())
+        if(!batalhaAtual.batalhaAcabou())
             return "A Batalha ainda não acabou.";
         return batalhaAtual.getVencedores();
     }

@@ -413,7 +413,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             throw new InfInvalidoException("Golpe","NULL");
         golpes.add(g);
     }
-    
     /**
      * Adiciona um golpe fisico a lista de golpes que o personagem pode executar
      * 
@@ -424,7 +423,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeFisico(nome,arma));
     }
-    
     /**
      * Adiciona um golpes magicos a lista de golpes que o personagem pode executar
      * 
@@ -437,7 +435,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoBasico(nome));
     }
-    
     /**
      * Adiciona um golpes magicos a lista de golpes que o personagem pode executar
      * 
@@ -450,7 +447,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoBolaDeFogo(nome));
     }
-    
     /**
      * Adiciona um golpes magicos a lista de golpes que o personagem pode executar
      * 
@@ -463,7 +459,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoMeteoro(nome));
     }
-    
     /**
      * Adiciona um golpes magicos a lista de golpes que o personagem pode executar
      * 
@@ -476,7 +471,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             throw new InfJaExistenteException("Golpe");
         golpes.add(new GolpeMagicoLancaDeGelo(nome));
     }
-    
     /**
      * Adiciona um golpes magicos a lista de golpes que o personagem pode executar
      * 
@@ -555,6 +549,16 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public void resetarPontosDeAcao(){
         this.pontosDeAcao = 2;
+    }
+    
+    /**
+     * Reseta o personagem deixando ele "novo" para uma proxima partida
+     */
+    public void resetarStatus(){
+        resetarPontosDeAcao();
+        danoRecebido = 0;
+        situacaoDeVida = SituacaoDeVida.SAUDAVEL;
+        estados = new ArrayList<Estado>();
     }
     
     /**

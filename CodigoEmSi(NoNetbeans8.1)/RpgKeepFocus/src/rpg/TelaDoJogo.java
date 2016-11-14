@@ -96,11 +96,19 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         return scan.nextInt();
     }    
     
+    /**
+     * Apresenta que as batalhas iniciaram
+     */
     @Override
     public void iniciandoRodadaDeBatalhas(){
         System.out.println("Inicia-se o jogo:");
     }
     
+    /**
+     * Apresenta os inimigos da batalha atual
+     * 
+     * @param inf Matriz de string com as informacoes necessarias
+     */
     @Override
     public void apresentandoInimigos(String[][] inf){
         System.out.println("\nInimigos:");
@@ -121,13 +129,21 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         }
     }
     
+    /**
+     * Exibe que comecou os turnos
+     */
     @Override
     public void iniciandoTurnos(){
         System.out.println("\n- Inicio dos turnos -\n");
     }
     
+    /**
+     * Exibe informacoes resumidas de todos os lutadores da batlaha atual
+     * 
+     * @param inf Matriz de strings com as informacoes necessarias
+     */
     @Override
-    public void exibindoInformacoesResumidasDeTodosOsLutadores(String[][] inf){
+    public void exibindoSituacaoDosPersonagens(String[][] inf){
         System.out.println("\nStatus:");
         int cont = 1;
         for(String[] x : inf){
@@ -145,33 +161,57 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         System.out.println();
     }
     
+    /**
+     * Exibe qual turno esta
+     * 
+     * @param turno Int com o turno atual
+     */
     @Override
     public void exibindoTurnoAtual(int turno){
         System.out.println("[turno " + turno + "]");
     }
     
+    /**
+     * Exibe de quem e a vez de executar acao
+     * 
+     * @param lutadorNome String com o nome do lutador
+     */
     @Override
-    public void antesDeExibirVezDoLutador(String lutadorNome){
+    public void exibindoVezDoLutador(String lutadorNome){
         System.out.println("////////////////////////// "+lutadorNome+" //////////////////////////");
     }
     
+    /**
+     * Exibe em forma de relatorio oq for passado em relatorio
+     * 
+     * @param relatorio String com o relatorio a ser escrito
+     */
     @Override
     public void exibindoRelatorio(String relatorio){
         System.out.println("Relatório: " + relatorio);
         System.out.println();
     }
     
+    /**
+     * Exibe o encerramento de uma batalha, dizendo quem venceu e a pontuacao atual
+     * 
+     * @param vencedores Quem venceu a batalha
+     * @param pontuacao 
+     */
     @Override
-    public void encerramentoDaBatalha(String vencedores){
+    public void encerramentoDaBatalha(String vencedores, int pontuacao){
         System.out.println("A batalha acabou!");
         System.out.println("Vencedores: " + vencedores);
-    }
-    
-    @Override
-    public void exibirFim(int pontuacao){
         System.out.println("Pontuacao Final: " + pontuacao);
+        System.out.println();
     }
     
+    /**
+     * Exibe menu para escolha de acao
+     * 
+     * @param inf Vetor de strings com que acoes o lutador pode fazer
+     * @return 
+     */
     @Override
     public int escolhendoAcao(String[] inf){
         String aux = "Escolha sua ação " + inf[0] + ", voce tem " + inf[1] + " pontos de acao restantes: 1-Atacar ";
@@ -185,6 +225,12 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         return scan.nextInt();
     }
     
+    /**
+     * Exibe o menu para escolher o alvo quando a acao atacar for selecionada
+     * 
+     * @param inf Vetor com os nomes dos alvos
+     * @return Nome do alvo
+     */
     @Override
     public String escolhendoAlvo(String[] inf){
         System.out.println();
@@ -220,7 +266,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     /**
      * Metodo para se adquirir um nome de golpe valido
      * 
-     * @param i int com a posicao do personagem
+     * @param inf matriz com as informacoes necessarias
      * @return String com o nome do golpe
      */
     @Override
@@ -251,5 +297,21 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
             }
         }
         return inf[golpeNumero-1][0];
+    }
+    
+    /**
+     * Pergunta se o jogador quer jogar outra partida ou nao
+     * 
+     * @return True quer, fal caso nao queira
+     */
+    @Override
+    public boolean querJogarOutraPartida(){
+        System.out.println("Quer jogar outra partida:\n"
+                + "1-Sim 2-Nao");
+        Scanner scan = new Scanner (System.in);
+        int a = scan.nextInt();
+        if(a == 1)
+            return true;
+        return false;
     }
 }
