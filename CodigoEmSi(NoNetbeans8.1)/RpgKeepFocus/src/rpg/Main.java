@@ -9,8 +9,9 @@ import rpg.excecoes.AcaoInvalidaException;
 public class Main {
     public static void main(String[] args){
         try{
-            TelaDoJogo tela = new TelaDoJogo();
-
+            //TelaDoJogo tela = new TelaDoJogo();
+            TelaDoJogoAlternativa tela = new TelaDoJogoAlternativa();
+            
             tela.exibirInicio();
         }
         catch(AcaoInvalidaException e){

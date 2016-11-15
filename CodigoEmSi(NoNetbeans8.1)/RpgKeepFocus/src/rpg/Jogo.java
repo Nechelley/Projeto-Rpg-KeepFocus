@@ -154,7 +154,7 @@ public class Jogo implements Serializable{
             //reseto os pontos de acao dos herois
             for(Personagem h : timeDosHerois){
                 h.resetarPontosDeAcao();
-            }         
+            }
             
             //verifico se ele quer jogar outra partida
             if(!getVencedores().equals("Herois"))//garanto que a mensagem apareca apenas se o herois perderem
@@ -163,9 +163,10 @@ public class Jogo implements Serializable{
                     for(Personagem h : timeDosHerois){
                         h.resetarStatus();
                     }
-                    for(Personagem p : batalhaAtual.getLutadores()){
-                        if(p instanceof Inimigo)
-                            p.diminuiNumInstancias();
+                    for(Personagem p : batalhaAtual.getInimigos()){
+                        if(p instanceof Cultista)
+                            System.out.println("antes: " + p.getInstancias());
+                        p.diminuiNumInstancias();
                     }
                         
                     situacaoDoJogo = SituacaoDoJogo.BATALHASCOMECARAM;
@@ -386,11 +387,11 @@ public class Jogo implements Serializable{
                 case 3:
                     relatorio = esquivar(lutador);
                     break;
-                case 5:
+                case 4:
                     relatorio = lutador.getNome() + " encerrou sua vez.";
                     flagPersonagem = false;//sai do loop de personagens
                     break;
-                case 6:
+                case 5:
                     tela.exibindoSituacaoDosPersonagens(matrizLutadores());
                     break;
                 default:
@@ -775,8 +776,8 @@ public class Jogo implements Serializable{
     private Personagem definirAlvoAleatorio(Personagem lutador) {
         List<Personagem> lista = batalhaAtual.getPossiveisAlvos(lutador);
         Random random = new Random();
-        
-        return lista.get(random.nextInt(lista.size()));
+        Personagem alvo = lista.get(random.nextInt(lista.size()));
+        return alvo;
     }
     /**
      * Define o alvo a ser atacado como o alvo mais fraco.
@@ -802,7 +803,6 @@ public class Jogo implements Serializable{
                 alvo = p;
             }
         }
-
         return alvo;
     }    
     /**
@@ -824,7 +824,6 @@ public class Jogo implements Serializable{
                 alvo = p;
             }
         }
-
         return alvo;
     }
     /**
@@ -846,7 +845,7 @@ public class Jogo implements Serializable{
         while(g.getCustoDeAcao() > lutador.getPontosDeAcao()){
             aleatorio++;
             
-            if(aleatorio > tam)
+            if(aleatorio == tam)
                 aleatorio = 0;
             
             g = lista.get(aleatorio);

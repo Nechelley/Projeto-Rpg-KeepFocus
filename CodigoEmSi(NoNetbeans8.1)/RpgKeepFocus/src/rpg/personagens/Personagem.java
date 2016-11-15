@@ -381,7 +381,6 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             situacaoDeVida = SituacaoDeVida.INCONSCIENTE;
         else{
             situacaoDeVida = SituacaoDeVida.MORTO;
-            diminuiNumInstancias();
         }
     }
     
@@ -567,7 +566,7 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      * @return Boolean com true se vivo e false se morto
      */
     public boolean estaVivo(){
-        return situacaoDeVida != SituacaoDeVida.MORTO;
+        return situacaoDeVida != SituacaoDeVida.MORTO && situacaoDeVida != SituacaoDeVida.INCONSCIENTE;
     } 
     
     /**
@@ -614,7 +613,7 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
             //verifico se tem alguma golpe que pode fazer
             for(Golpe g : golpes)
                 if(g.getCustoDeAcao() <= pontosDeAcao)
-                    inf += "podeDarGolpe";
+                    inf += "podeDarGolpe("+g.getNome()+")";
         }
         
         

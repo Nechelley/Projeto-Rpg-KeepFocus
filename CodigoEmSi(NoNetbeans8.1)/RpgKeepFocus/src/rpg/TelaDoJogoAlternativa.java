@@ -7,9 +7,9 @@ import java.util.Scanner;
  *
  * @author Nechelley Alves
  */
-public class TelaDoJogo implements ObservadorJogo, Serializable{
+public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
     private static Jogo rpg;
-    public TelaDoJogo(){
+    public TelaDoJogoAlternativa(){
         rpg = new Jogo(this);
     }
     
@@ -34,27 +34,27 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         String armadura = "";
         do{
             System.out.println("Insira o nome do personagem:");
-            nome = scan.nextLine();
+            nome = "Nechelley";
         }while(!verificaNome(nome));
         do{
             System.out.println("Insira a classe do personagem:\n"
                     + "1-Guerreiro 2-Mago 3-Clerigo");
-            classe = scan.next();
+            classe = "2";
         }while(!verificaNumero(classe,3));
         do{
             System.out.println("Insira o foco do personagem:\n"
                     + "1-Força 2-Destreza 3-Constituição 4-Carisma");
-            foco = scan.next();
+            foco = "1";
         }while(!verificaNumero(foco,4));
         do{
             System.out.println("Insira qual é a arma do personagem:\n"
                     + "1-Pequena 2-Média 3-Grande");
-            arma = scan.next();
+            arma = "2";
         }while(!verificaNumero(arma,3));
         do{
             System.out.println("Insira qual é o tipo de armadura do personagem:\n"
                     + "1-Nada 2-Leve 3-Pesada");
-            armadura = scan.next();
+            armadura = "2";
         }while(!verificaNumero(armadura,3));
         
         String[] heroi = {nome,
@@ -78,7 +78,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         do{
             System.out.println("Adicao do personagem no time dos herois encerrada, deseja adicionar mais personagens ao time de herois:\n"
                     + "1-Sim 2-Nao");
-            num = scan.nextInt(); 
+            num = 2; 
         }while(!verificaNumero(String.valueOf(num),2));
         return num;
     }    
@@ -98,11 +98,11 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         do{
             System.out.println("Qual a classe de golpe:\n"
                     + "1-Fisico 2-Magico 3-Bola De Fogo 4-Meteoro 5-Lanca De Gelo 6-Nevasca");
-            classe = scan.next();
+            classe = "2";
         }while(!verificaNumero(classe,6));
         do{
             System.out.println("Qual o nome do golpe:");
-            golpeNome = scan.next();
+            golpeNome = "mag";
         }while(!verificaNome(golpeNome));
         
         String[] inf = {classe, golpeNome};
@@ -121,7 +121,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         do{
             System.out.println("Deseja adicionar mais golpes:\n"
                         + "1-Sim 2-Nao");
-            num = scan.nextInt();
+            num = 2;
         }while(!verificaNumero(String.valueOf(num),2));
         return num;
     } 
@@ -144,7 +144,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         do{
             System.out.println(aux);
             Scanner scan = new Scanner (System.in);  
-            escolha = scan.nextInt();
+            escolha = 1;
         }while(!verificaAcao(aux, escolha));
         
         return escolha;
@@ -173,7 +173,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
             System.out.println ();
             System.out.print("Numero: ");
             Scanner scan = new Scanner (System.in);
-            alvoNumero = scan.nextInt();
+            alvoNumero = 1;
         }while(!verificaNumero(String.valueOf(alvoNumero), cont));
         
         return inf[alvoNumero-1];
@@ -202,7 +202,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
             System.out.println ();
             System.out.print("Numero do golpe: ");
             Scanner scan = new Scanner (System.in);
-            golpeNumero = scan.nextInt();
+            golpeNumero = 1;
         }while(!verificaNumero(String.valueOf(golpeNumero), cont));
         return inf[golpeNumero-1][0];
     }
@@ -383,7 +383,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
             System.out.println("Quer jogar outra partida:\n"
                     + "1-Sim 2-Nao");
             Scanner scan = new Scanner (System.in);
-            a = scan.nextInt();
+            a = 1;
         }while(!verificaNumero(String.valueOf(a), 2));
         
         if(a == 1)
