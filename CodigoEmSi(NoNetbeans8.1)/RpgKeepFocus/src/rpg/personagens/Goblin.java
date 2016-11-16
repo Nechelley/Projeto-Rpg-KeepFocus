@@ -42,4 +42,8 @@ public class Goblin extends Inimigo {
     public void diminuiNumInstancias () {
         numInstancias--;
     }
+    @Override
+    public int getInstancias(){
+        return numInstancias;
+    }
 }

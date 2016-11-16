@@ -22,7 +22,7 @@ public class Cultista extends Inimigo {
      * @param armadura Armadura com qual o tipo de armadura o personagem usara
      */
     public Cultista(Foco foco, Arma arma, Armadura armadura) {
-        super("Cultistaa"+numInstancias+"a "+String.valueOf(numInstancias+1),Classe.CULTISTA,foco,arma,armadura);
+        super("Cultista "+String.valueOf(numInstancias+1),Classe.CULTISTA,foco,arma,armadura);
         numInstancias++;
     }
     
@@ -42,6 +42,7 @@ public class Cultista extends Inimigo {
     public void diminuiNumInstancias () {
         numInstancias--;
     }
+    @Override
     public int getInstancias(){
         return numInstancias;
     }

@@ -164,9 +164,9 @@ public class Jogo implements Serializable{
                         h.resetarStatus();
                     }
                     for(Personagem p : batalhaAtual.getInimigos()){
-                        if(p instanceof Cultista)
-                            System.out.println("antes: " + p.getInstancias());
+                        System.out.println("antes: " + p.getInstancias());
                         p.diminuiNumInstancias();
+                        System.out.println("depois: " + p.getInstancias());
                     }
                         
                     situacaoDoJogo = SituacaoDoJogo.BATALHASCOMECARAM;

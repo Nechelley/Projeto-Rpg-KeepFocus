@@ -389,6 +389,8 @@ public abstract class Personagem implements Comparable<Personagem>, Serializable
      */
     public abstract void diminuiNumInstancias ();
     
+    public abstract int getInstancias();
+    
     /**
      * Diz se uma classe é ou nao magica
      * 

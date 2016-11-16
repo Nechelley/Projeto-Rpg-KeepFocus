@@ -52,4 +52,8 @@ public class Heroi extends Personagem{
     public void diminuiNumInstancias() {
         //IMPEDIR QUE HEROI SE TORNE ABSTRACT
     }
+    @Override
+    public int getInstancias(){
+        return 0;
+    }
 }

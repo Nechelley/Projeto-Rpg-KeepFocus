@@ -42,4 +42,8 @@ public class Chefe extends Inimigo {
     public void diminuiNumInstancias () {
         numInstancias--;
     }
+    @Override
+    public int getInstancias(){
+        return numInstancias;
+    }
 }
