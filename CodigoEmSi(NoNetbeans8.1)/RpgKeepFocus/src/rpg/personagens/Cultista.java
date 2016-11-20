@@ -42,7 +42,4 @@ public class Cultista extends Inimigo {
     public void diminuiNumInstancias () {
         numInstancias--;
     }
-    public int getInstancias(){
-        return numInstancias;
-    }
 }
