@@ -1,0 +1,90 @@
+Rpg KeepFocus
+Guia
+
+(a ser implementado)
+OK-garantir que apenas certa classe use tal arma/armadura/golpe.
+-criar buffs.
+-criar magias de cura.
+-criar loja.
+OK-fazer a situacao de vida afetar a chance de acerto e o dano.
+-fazer recuperação de vida após cada batalha.
+-remodelar inimigos e IA.
+
+Personagem------------------------------------------------------------------
+	Atributos
+		Nome: para identificação.
+		Classe:
+			Mago: capaz de usar magias, mas não pode usar armas ou armaduras muito fortes.
+			Clérigo: é um mago que pode usar magias de cura e buffs, mas que não pode usar magias muito fortes.
+			Guerreiro: não pode usar magias, mas pode usar armas e armaduras pesadas.
+		Foco:
+			Força: ganha mais um ponto de dano.
+			Destreza: permite o personagem executar a ação esquivar e aumenta em um ponto a iniciativa.
+			Constituição: aumenta um ponto de saúde, diminui chance de tomar buffs negativos.
+			Carisma: aumenta o desconto em lojas.
+		Saúde: determina quanto de dano o personagem pode receber.
+			Mago: Saúde padrão igual a 3.
+			Clérigo: Saúde padrão igual a 3.
+			Guerreiro: Saúde padrão igual a 4.
+		Arma:
+			Pequena: dano = 0, todos podem usa-la.
+			Média: dano = 1, apenas Guerreiros podem usa-la.
+			Grande: dano = 2, apenas Guerreiros podem usa-la.
+		Armadura:
+			Nada: defesa = 0, todos podem usa-la.
+			Leve: defesa = 1, apenas Magos não podem usa-la.
+			Pesada: defesa = 2, apenas Guerreiros podem usa-la.
+		Dado: cada personagem tem seu próprio d6.
+		Dano recebido maximo: quanto de dano o personagem é capaz de receber e é calculado a partir da Saúde.
+		Dano recebido: o quanto de dano foi recebido ate o momento.
+		Situação de vida: qual a situação do personagem com base no dano recebido.
+			Saudável: dura ate o personagem receber mais de 30% do dano maximo, não há modificadores.
+			Atordoado: dura ate o personagem receber mais de 50% do dano maximo, o personagem perde -1 de chance de acerto.
+			Desesperado: dura ate o personagem receber mais de 75% do dano maximo, o personagem perde -2 de chance de acerto e -1 de dano.
+			Inconsciente: dura ate o personagem morrer, ou seja quando o dano recebido for igual ao maximo que o personagem aguenta, neste ponto o personagem já não pode executar ações.
+			Morto: o personagem esta morto e não pode mais executar ações ou ser alvo de qualquer magia.
+		Iniciativa: usada para determinar a ordem de ação dos personagems dentro de uma batalha, será explicado mais detalhadamente na sessão de batalha.
+		Pontos de ação: quantos pontos o personagem tem para gastar executando ações.
+		Estados: o personagem pode estar defendendo, esquivando ou estar sendo afetado por efeito de um buff.
+		Golpes: golpes que o personagem possui, será explicado melhor depois.
+	Estados:
+		Esquivando: no próximo ataque recebido o personagem joga dois d6 e se a soma der maior que 9(chance de 27% de ocorrer) o dano recebido se torna 0, de qualquer forma o personagem deixa de estar no estado Esquivando.
+		Defendendo: no próximo ataque recebido o dano recebido é reduzido pela metade, de qualquer forma o personagem deixa de estar no estado Defendendo.
+	Golpes: para cada golpe o personagem deve escolher uma das classes de golpes pré definidas e um nome para o golpe.
+		Fisico: dano = arma + d6/2, chance = 8, custo = 1, faixa de dano possível [0:5].
+		Arcano nv1: dano = 1 + d6, chance = 8, custo = 1, faixa de dano possível [1:7].
+		Arcano nv2: dano = 3 + d6/2, chance = 8, custo = 2, faixa de dano possível [3:6].
+		Fogo nv1: dano = 2 + d6/3, chance = 10, custo = 1, faixa de dano possível [2:4].
+		Fogo nv2: dano = 3*d6, chance = 3, custo = 2, faixa de dano possível [0:18].
+Jogo------------------------------------------------------------------------
+	Funcionamento: o jogador cria sua equipe e depois passa por uma serie de batalhas, ao final de cada uma delas o jogador ganha um ponto se ganhar e todos os membros do seu time recuperam 20% de vida, e isso ocorre ate o momento em que o jogador perde uma batalha.
+Batalha---------------------------------------------------------------------
+	Funcionamento: no início de cada batalha todos os lutadores rodam iniciativa, aqueles que tiverem foco em Destreza ganham mais um ponto neste momento, e então com base nisso é feita a ordem de qual lutador executas suas ações primeiro em cada turno, o lutador executas as ações que deseja e estão disponíveis, em seguida o próximo lutador faz o mesmo assim por diante, até que todos os membros de um dos dois times(Heróis e Inimigos) morram ou fiquem em situação de vida Inconsciente.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

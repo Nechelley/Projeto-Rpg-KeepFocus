@@ -1,15 +1,22 @@
 package rpg;
 
-import rpg.batalhas.Batalha;
-import rpg.excecoes.AcaoInvalidaException;
-import rpg.excecoes.InfInvalidoException;
+import rpg.personagens.inimigos.Incendiario;
+import rpg.personagens.inimigos.Dragao;
+import rpg.personagens.inimigos.Inimigo;
+import rpg.personagens.inimigos.Ogro;
+import rpg.personagens.inimigos.Big;
+import rpg.personagens.inimigos.Goblin;
+import rpg.personagens.inimigos.Marrento;
+import rpg.personagens.inimigos.Cultista;
+import rpg.personagens.inimigos.Esqueleto;
+import rpg.personagens.inimigos.Zumbi;
 import java.io.Serializable;
 import rpg.personagens.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import rpg.golpes.Golpe;
-import rpg.personagens.Chefe;
+import rpg.personagens.inimigos.Chefe;
 import rpg.personagens.enums.Arma;
 import rpg.personagens.enums.Armadura;
 import rpg.personagens.enums.Classe;
@@ -33,8 +40,6 @@ public class Jogo implements Serializable{
     
     //objeto que esta ouvindo o jogo
     private ObservadorJogo tela;
-    //arquivo que salva e carrega o jogo
-    private Arquivo arquivo;
     
     //nível de habilidade Do Time De Herois
     private int habilidadeDoTimeDeHerois;
@@ -56,7 +61,7 @@ public class Jogo implements Serializable{
                 
         timeDosHerois = new ArrayList<Personagem>();
         if(tela == null)
-            throw new InfInvalidoException("Tela","NULL");
+            throw new RuntimeException("Tela inválida ( NULL ).");
         this.tela = tela;
     }
 
@@ -185,7 +190,7 @@ public class Jogo implements Serializable{
             //loop para adicionar os golpes do personagem
             int opg;
             do{
-                String[] golpeInf = tela.lendoGolpe();
+                String[] golpeInf = tela.lendoGolpe(p.getClasse().getString());
                 int classe = Integer.parseInt(golpeInf[0]);
                 String nomeGolpe = golpeInf[1];
                 switch(classe){
@@ -193,19 +198,16 @@ public class Jogo implements Serializable{
                         p.addGolpeFisico(nomeGolpe);
                         break;
                     case 2:
-                        p.addGolpeMagicoBasico(nomeGolpe);
+                        p.addGolpeArcano1(nomeGolpe);
                         break;
                     case 3:
-                        p.addGolpeMagicoBolaDeFogo(nomeGolpe);
+                        p.addGolpeArcano2(nomeGolpe);
                         break;
                     case 4:
-                        p.addGolpeMagicoMeteoro(nomeGolpe);
+                        p.addGolpeFogo1(nomeGolpe);
                         break;
                     case 5:
-                        p.addGolpeMagicoLancaDeGelo(nomeGolpe);
-                        break;
-                    case 6:
-                        p.addGolpeMagicoNevasca(nomeGolpe);
+                        p.addGolpeFogo2(nomeGolpe);
                         break;
                 }
                 opg = tela.confirmarSeTemMaisGolpesDeHerois();
@@ -225,7 +227,7 @@ public class Jogo implements Serializable{
      */
     public Personagem adicionarHeroi(String nome, String classe, String foco, String arma, String armadura){
         if(situacaoDoJogo != SituacaoDoJogo.CRIANDOHEROIS)
-            throw new AcaoInvalidaException("adicionar heroi",2);
+            throw new RuntimeException("Não é possível adicionar herói pois a fase de criação de heróis já passou.");
         
         Classe classee = Classe.getClassePorId(Integer.parseInt(classe));
         Foco focoo = Foco.getFocoPorId(Integer.parseInt(foco));
@@ -495,7 +497,6 @@ public class Jogo implements Serializable{
             throw new RuntimeException("Nenhum inimigo adicionado na batalha.");
         
         batalhaAtual = new Batalha(timeDosHerois, inimigos);
-        batalhaAtual.iniciarBatalha();
     }
     /**
      * Define um inimigo a ser adicionado a partir de um número de índice
@@ -524,15 +525,15 @@ public class Jogo implements Serializable{
                 armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(2));
                 i = new Cultista(foco,arma,armadura);
                 i.addGolpeFisico("Facada");
-                i.addGolpeMagicoMeteoro("Invocacao meteorica");
-                i.addGolpeMagicoNevasca("Nevasca mortal");
+                i.addGolpeArcano1("Invocacao meteorica");
+                i.addGolpeFogo1("Nevasca mortal");
                 break;
             case 2://DRAGAO
                 arma = Arma.getArmaPorId(aleatorio.nextInt(2) + 1);
                 armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(2) + 1);
                 i = new Dragao(foco,arma,armadura);
                 i.addGolpeFisico("Garras");
-                i.addGolpeMagicoBolaDeFogo("Bola de fogo");
+                i.addGolpeFogo1("Bola de fogo");
                 break;
             case 3://OGRO
                 arma = Arma.GRANDE;
@@ -569,7 +570,7 @@ public class Jogo implements Serializable{
                 armadura = Armadura.getArmaduraPorId(aleatorio.nextInt(2) + 1);
                 i = new Incendiario(foco,arma,armadura);
                 i.addGolpeFisico("Coronhada");
-                i.addGolpeMagicoBolaDeFogo("Chamas gritantes");
+                i.addGolpeFogo1("Chamas gritantes");
                 break;
             case 9://BIG
                 arma = Arma.getArmaPorId(aleatorio.nextInt(2));

@@ -26,42 +26,11 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      */
     @Override
     public String[] lendoHeroi(){
-        Scanner scan = new Scanner (System.in);
-        String nome = "";
-        String classe = "";
-        String foco = "";
-        String arma = "";
-        String armadura = "";
-        do{
-            System.out.println("Insira o nome do personagem:");
-            nome = "Nechelley";
-        }while(!verificaNome(nome));
-        do{
-            System.out.println("Insira a classe do personagem:\n"
-                    + "1-Guerreiro 2-Mago 3-Clerigo");
-            classe = "2";
-        }while(!verificaNumero(classe,3));
-        do{
-            System.out.println("Insira o foco do personagem:\n"
-                    + "1-Força 2-Destreza 3-Constituição 4-Carisma");
-            foco = "1";
-        }while(!verificaNumero(foco,4));
-        do{
-            System.out.println("Insira qual é a arma do personagem:\n"
-                    + "1-Pequena 2-Média 3-Grande");
-            arma = "2";
-        }while(!verificaNumero(arma,3));
-        do{
-            System.out.println("Insira qual é o tipo de armadura do personagem:\n"
-                    + "1-Nada 2-Leve 3-Pesada");
-            armadura = "2";
-        }while(!verificaNumero(armadura,3));
-        
-        String[] heroi = {nome,
-            String.valueOf(Integer.parseInt(classe) - 1),
-            String.valueOf(Integer.parseInt(foco) - 1),
-            String.valueOf(Integer.parseInt(arma) - 1),
-            String.valueOf(Integer.parseInt(armadura) - 1)};
+        String[] heroi = {"Nech",
+            String.valueOf(1),//mago
+            String.valueOf(3),//constituicao
+            String.valueOf(0),//pequena
+            String.valueOf(0)};//nada
         
         return heroi;
     }
@@ -73,14 +42,7 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      */
     @Override
     public int confirmarSeTemMaisHerois(){
-        Scanner scan = new Scanner (System.in);
-        int num = 0;
-        do{
-            System.out.println("Adicao do personagem no time dos herois encerrada, deseja adicionar mais personagens ao time de herois:\n"
-                    + "1-Sim 2-Nao");
-            num = 2; 
-        }while(!verificaNumero(String.valueOf(num),2));
-        return num;
+        return 2;
     }    
     
     /**
@@ -90,22 +52,8 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      * @return Vetor de Strings com as informaçoes do golpe do heroi
      */
     @Override
-    public String[] lendoGolpe(){
-        Scanner scan = new Scanner (System.in);
-        String classe = "";
-        String golpeNome = "";
-                
-        do{
-            System.out.println("Qual a classe de golpe:\n"
-                    + "1-Fisico 2-Magico 3-Bola De Fogo 4-Meteoro 5-Lanca De Gelo 6-Nevasca");
-            classe = "2";
-        }while(!verificaNumero(classe,6));
-        do{
-            System.out.println("Qual o nome do golpe:");
-            golpeNome = "mag";
-        }while(!verificaNome(golpeNome));
-        
-        String[] inf = {classe, golpeNome};
+    public String[] lendoGolpe(String classe){
+        String[] inf = {"3", "magia arcana"};
         return inf;
     }
     
@@ -116,14 +64,7 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      */
     @Override
     public int confirmarSeTemMaisGolpesDeHerois(){
-        Scanner scan = new Scanner (System.in);
-        int num = 0;
-        do{
-            System.out.println("Deseja adicionar mais golpes:\n"
-                        + "1-Sim 2-Nao");
-            num = 2;
-        }while(!verificaNumero(String.valueOf(num),2));
-        return num;
+        return 2;
     } 
     
     /**
@@ -134,20 +75,7 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      */
     @Override
     public int escolhendoAcao(String[] inf){
-        int escolha = 0;
-        String aux = "Escolha sua ação " + inf[0] + ", voce tem " + inf[1] + " pontos de acao restantes: 1-Atacar ";
-        if(!inf[2].isEmpty())
-            aux += "2-Defender ";
-        if(!inf[3].isEmpty())
-            aux += "3-Esquivar ";
-        aux += "4-Passar vez 5-Pedir para exibir status dos personagens";
-        do{
-            System.out.println(aux);
-            Scanner scan = new Scanner (System.in);  
-            escolha = 1;
-        }while(!verificaAcao(aux, escolha));
-        
-        return escolha;
+        return 1;//so ataca
     }
     
     /**
@@ -158,25 +86,7 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      */
     @Override
     public String escolhendoAlvo(String[] inf){
-        System.out.println();
-        System.out.println("Escolha quem atacar, escolha o numero do seu alvo:");
-        System.out.println("A seguir estão suas possíveis escolhas:");
-
-        int cont = 0;
-        for(String s : inf){
-            cont++;
-            System.out.println(cont + ")" + s);
-        }
-        
-        int alvoNumero = 0;
-        do{
-            System.out.println ();
-            System.out.print("Numero: ");
-            Scanner scan = new Scanner (System.in);
-            alvoNumero = 1;
-        }while(!verificaNumero(String.valueOf(alvoNumero), cont));
-        
-        return inf[alvoNumero-1];
+        return inf[0];
     }
     
     /**
@@ -187,24 +97,7 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      */
     @Override
     public String escolhendoGolpe(String[][] inf){
-        System.out.println();
-        System.out.println("Informe o golpe(o numero do golpe) que sera executado:");
-        System.out.println("A seguir estão suas possíveis escolhas:");
-        
-        int cont = 0;
-        for(String[] s : inf){
-            cont++;
-            System.out.println(cont + ")" + s[0] + " (custa " + s[1] + " pontos de acao)");
-        }
-        
-        int golpeNumero = 0;
-        do{
-            System.out.println ();
-            System.out.print("Numero do golpe: ");
-            Scanner scan = new Scanner (System.in);
-            golpeNumero = 1;
-        }while(!verificaNumero(String.valueOf(golpeNumero), cont));
-        return inf[golpeNumero-1][0];
+        return inf[0][0];
     }
     
     
@@ -378,16 +271,6 @@ public class TelaDoJogoAlternativa implements ObservadorJogo, Serializable{
      */
     @Override
     public boolean querJogarOutraPartida(){
-        int a = 0;
-        do{
-            System.out.println("Quer jogar outra partida:\n"
-                    + "1-Sim 2-Nao");
-            Scanner scan = new Scanner (System.in);
-            a = 1;
-        }while(!verificaNumero(String.valueOf(a), 2));
-        
-        if(a == 1)
-            return true;
-        return false;
+        return true;
     }
 }

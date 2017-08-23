@@ -9,6 +9,6 @@ package rpg.excecoes;
  */
 public class InfJaExistenteException extends RuntimeException{
     public InfJaExistenteException(String inf){
-        super(inf + " ja existente.");
+        super("(" + inf + ") ja existente.");
     }
 }

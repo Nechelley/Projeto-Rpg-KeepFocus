@@ -46,16 +46,41 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
                     + "1-Força 2-Destreza 3-Constituição 4-Carisma");
             foco = scan.next();
         }while(!verificaNumero(foco,4));
-        do{
-            System.out.println("Insira qual é a arma do personagem:\n"
-                    + "1-Pequena 2-Média 3-Grande");
-            arma = scan.next();
-        }while(!verificaNumero(arma,3));
-        do{
-            System.out.println("Insira qual é o tipo de armadura do personagem:\n"
-                    + "1-Nada 2-Leve 3-Pesada");
-            armadura = scan.next();
-        }while(!verificaNumero(armadura,3));
+        if(classe.equals("2")){//MAGO
+            do{
+                System.out.println("Insira qual é a arma do personagem:\n"
+                        + "1-Pequena");
+                arma = scan.next();
+            }while(!verificaNumero(arma,1));
+            do{
+                System.out.println("Insira qual é o tipo de armadura do personagem:\n"
+                        + "1-Nada");
+                armadura = scan.next();
+            }while(!verificaNumero(armadura,1));
+        }else if(classe.equals("3")){//CLERIGO
+            do{
+                System.out.println("Insira qual é a arma do personagem:\n"
+                        + "1-Pequena");
+                arma = scan.next();
+            }while(!verificaNumero(arma,1));
+            do{
+                System.out.println("Insira qual é o tipo de armadura do personagem:\n"
+                        + "1-Nada 2-Leve");
+                armadura = scan.next();
+            }while(!verificaNumero(armadura,2));
+        }else{//GUERReIRO
+            do{
+                System.out.println("Insira qual é a arma do personagem:\n"
+                        + "1-Pequena 2-Média 3-Grande");
+                arma = scan.next();
+            }while(!verificaNumero(arma,3));
+            do{
+                System.out.println("Insira qual é o tipo de armadura do personagem:\n"
+                        + "1-Nada 2-Leve 3-Pesada");
+                armadura = scan.next();
+            }while(!verificaNumero(armadura,3));
+        }
+        
         
         String[] heroi = {nome,
             String.valueOf(Integer.parseInt(classe) - 1),
@@ -90,22 +115,49 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
      * @return Vetor de Strings com as informaçoes do golpe do heroi
      */
     @Override
-    public String[] lendoGolpe(){
+    public String[] lendoGolpe(String classe){//ACRESCENTAR O PARAMETRO DE GOLPES JA LIDOS, PARA Q N AJA REPETICOES DE NOME
         Scanner scan = new Scanner (System.in);
-        String classe = "";
+        String classeG = "";
         String golpeNome = "";
-                
-        do{
-            System.out.println("Qual a classe de golpe:\n"
-                    + "1-Fisico 2-Magico 3-Bola De Fogo 4-Meteoro 5-Lanca De Gelo 6-Nevasca");
-            classe = scan.next();
-        }while(!verificaNumero(classe,6));
-        do{
-            System.out.println("Qual o nome do golpe:");
-            golpeNome = scan.next();
-        }while(!verificaNome(golpeNome));
+        if(classe.equals("Guerreiro")){
+            do{
+                System.out.println("Qual a classe de golpe:\n"
+                        + "1-Fisico");
+                classeG = scan.next();
+            }while(!verificaNumero(classeG,1));
+            scan.next();
+            do{
+                System.out.println("Qual o nome do golpe:");
+                golpeNome = scan.nextLine();
+            }while(!verificaNome(golpeNome));
+        }else if(classe.equals("Clérigo")){
+            do{
+                System.out.println("Qual a classe de golpe:\n"
+                        + "1-Fisico 2-Arcano nv1 3-Fogo nv1 ");
+                classeG = scan.next();
+            }while(!verificaNumero(classeG,3));
+            scan.next();
+            if(classeG.equals("3"))//GAMBIARRA
+                classeG = "4";
+            do{
+                System.out.println("Qual o nome do golpe:");
+                golpeNome = scan.nextLine();
+            }while(!verificaNome(golpeNome));
+        }else{
+            do{
+                System.out.println("Qual a classe de golpe:\n"
+                        + "1-Fisico 2-Arcano nv1 3-Arcano nv2 4-Fogo nv1 5-Fogo nv2");
+                classeG = scan.next();
+            }while(!verificaNumero(classeG,5));
+            scan.next();
+            do{
+                System.out.println("Qual o nome do golpe:");
+                golpeNome = scan.nextLine();
+            }while(!verificaNome(golpeNome));
+        }
         
-        String[] inf = {classe, golpeNome};
+        
+        String[] inf = {classeG, golpeNome};
         return inf;
     }
     
@@ -211,36 +263,17 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
     
     //verificacoes
     private boolean verificaNome(String nome){
-        if(nome.isEmpty()){
-            System.out.println("Nome digitado invalido.");
+        if(Metodos.verificaNome(nome))
+            return true;
+        else{
+            System.out.println("Nome digitado inválido, tente novamente.");
             System.out.println();
             return false;
         }
-        String valoresValidos[] = {
-            "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
-            "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
-            "0","1","2","3","4","5","6","7","8","9"," "
-        };
-        boolean letraValida = false;
-        for(int i = 0; i < nome.length(); i++){
-            letraValida = false;
-            for(String v : valoresValidos){
-                if(nome.substring(i, i + 1).equals(v)){
-                    letraValida = true;
-                    break;
-                }
-            }
-            if(!letraValida){
-                System.out.println("Nome digitado errado.");
-                System.out.println();
-                return false;
-            }
-        }
-        return true;
     }
     private boolean verificaNumero(String num, int limite){
         if(Integer.valueOf(num) > limite || Integer.valueOf(num) < 1){
-            System.out.println("Numero digitado invalido, digite outro.");
+            System.out.println("Numero digitado inválido, tente novamente.");
             System.out.println();
             return false;
         }
@@ -250,7 +283,7 @@ public class TelaDoJogo implements ObservadorJogo, Serializable{
         if((!aux.contains("2-Defender") && escolha == 2) || 
                 (!aux.contains("3-Esquivar") && escolha == 3) ||
                 escolha < 1 || escolha > 5){
-            System.out.println("Numero digitado invalido, digite outro.");
+            System.out.println("Numero digitado invalido, tente novamente.");
             System.out.println();
             return false;
         }

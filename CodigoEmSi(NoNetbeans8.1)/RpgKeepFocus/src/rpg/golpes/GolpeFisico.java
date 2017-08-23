@@ -1,6 +1,5 @@
 package rpg.golpes;
 
-import rpg.excecoes.InfInvalidoException;
 import rpg.personagens.enums.Arma;
 
 /**
@@ -19,12 +18,11 @@ public class GolpeFisico extends Golpe{
      * @param arma Arma utilizada para fazer o ataque
      */
     public GolpeFisico(String nome, Arma arma){
-        super(nome);
+        super(nome,0,6,1);
         if(arma == null)
-            throw new InfInvalidoException("Arma","NULL");
-        setDanoBase(arma.getValor());
-        setChanceDeAcerto(6);
-        setCustoDeAcao(1);
+            throw new RuntimeException("Arma inválida ( NULL ).");
+        this.setDanoBase(arma.getValor());
+        
     }
     
     /**
@@ -33,7 +31,7 @@ public class GolpeFisico extends Golpe{
      * @param valorDoDado Valor do dado jogado
      */
     @Override
-    public void setDanoEmBatalha(int valorDoDado){
-        setDano(Math.round(valorDoDado/2) + getDanoBase());
+    public int getDanoEmBatalha(int valorDoDado){
+        return (Math.round(valorDoDado/2) + getDanoBase());
     }
 }

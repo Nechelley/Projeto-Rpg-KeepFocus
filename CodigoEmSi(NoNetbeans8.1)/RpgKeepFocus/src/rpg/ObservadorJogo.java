@@ -9,7 +9,7 @@ public interface ObservadorJogo {
     String[] lendoHeroi();
     int confirmarSeTemMaisHerois();
     
-    String[] lendoGolpe();
+    String[] lendoGolpe(String classe);
     public int confirmarSeTemMaisGolpesDeHerois();
     
     void iniciandoRodadaDeBatalhas();

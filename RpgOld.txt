@@ -1,0 +1,183 @@
+Exemplo de ficha                                                                                            Loja
+
+Nome da Personagem:_______________________ Saúde:___________________                  +Saudável(L), +Atordoado(E), +Desesperado(R), +Inconsciente(C),
+Nome do Jogador:__________________________ Saudável:________________                  +Iniciativa(L), Nunca1(R), Desempate(R),
+Raça:________________ Idade:________                                                  +Precisão(L), +Esquiva(L), +Defender(L), +Moedas(L),
+Ponto Forte:___________________________   Atordoado:________________                  +Loot(L), 
+Especialização:_________________________
+Habilidades:_____________________________ Desesperado:______________
+_________________________________________
+_________________________________________ Inconsciente:_____________
+_________________________________________
+_________________________________________
+Equipamentos e Acessórios   Peso   Observações:_____________________
+_________________________  ______  _________________________________                  Colar, Anel, Pulseira, Armadura, Armas
+_________________________  ______  _________________________________
+_________________________  ______  _________________________________
+_________________________  ______  _________________________________
+_________________________  ______  _________________________________
+_________________________  ______  Magias:__________________________
+_________________________  ______  _________________________________
+_________________________  ______  _________________________________
+_________________________  ______  _________________________________
+Armas          Dano     Alcance
+____________  ______  ___________  Armadura/Escudo:_________________
+____________  ______  ___________  Dinheiro:________________________
+
+Criação de personagem
+
+Ponto Forte: (Força, Destreza, Constituição, Carisma)
+Força:Aumenta um ponto de dano com armas de mão e Diminui a dificuldade
+de testes que exijam esforço físico.
+Destreza: Aumenta um ponto de iniciativa e Diminui a dificuldade de
+testes que exijam agilidade.
+Constituição: Aumenta um ponto de saúde e Diminui a dificuldade de
+testes que contra venenos, doenças, etc.
+Carisma: Aumenta o desconto em lojas e Diminui a dificuldade de testes
+que exijam comunicação.
+
+Realizando testes
+
+Jogada de 2d6 +ou- mods
+Baixo: (4-5)  |
+Médio: (6-7)  |- CD(Classe de Armadura)= 6 +- mods
+Alto: (8-9)   |
+
+Combate                                         Dano(mods)
+ 
+2 ações por turno                               Saudável: (0)
+Atacar, defender, esquivar,                     Atordoado: (-1)
+repocisionar, etc.                              Desesperado: (-2)
+                                                Inconsciente: (--)
+Saúde
+
+1d6/2(arredondado para cima)+2                          Dinheiro
+O número obtido será aplicado nos                         1d6
+três níveis de ferimento.
+O personagem MORRE se acumular o quíntuplo de
+pontos equivalentes a seu nível de Saúde. 
+
+Armas
+
+Pequenas(facas, punhais, flechas, clavas, porretes, etc): 1d6/2 (1 ação)(duplo)
+Médias(espadas e machados de uma mão, etc): 1d6/2 +1 (1 ações)
+Grandes(espadas e machados de duas mãos, etc): 1d6/2 +2 (2 ações)
+
+Armaduras
+
+Couro: 1  | Aumenta em CD
+Malha: 2  | Aumenta em CD
+
+Especializações
+
+Guerreiro(F ou Con)/Barbaro(F): Bravo lutador especialista em Armas de mão 
+(não inclui armas de projétil, como arcos, bestas, atiradeiras, etc). 
+O jogador deverá escolher uma arma preferencial para seu personagem.
+Habilidades de Guerreiro 
+(escolher 2 além de “Forçar” e “Combate com Armas” que são obrigatórias) 
+Inspirar, Intimidar, Montar – Conduzir, Observar,
+Forçar (chutar, socar, empurrar, puxar), Camuflagem, 
+Metalurgia – Armeiro, Combate com Armas.
+
+Ladino(D): Um indivíduo que aprendeu a sobreviver por meio de sua astúcia.
+Habilidades de Ladino 
+(escolher 3 além de “Mover-se furtivamente” que é obrigatória) 
+Mover-se furtivamente(Apunhalar costas > elimina o alvo), 
+Arrombar fechaduras, Punga (geralmente usada para bater carteiras), 
+Acrobacia, Disfarce, Fuga, Ocultamento, Jogo,
+Sorte (o jogador pode repetir UM teste por dia).
+
+Caçador(D): Um conhecedor das trilhas selvagens que domina armas de projétil.
+Habilidades de Caçador 
+(escolher 2 além de “Sobrevivência” e “Combate a Distância” que são obrigatórias) 
+Rastreamento, Sobrevivência, Mover-se furtivamente, 
+Adestramento de animais, Camuflagem, Observação, Conhecimento do Terreno, 
+Armadilhas, Combate a Distância(2 ações Precisão>cancela armadura).
+
+Mago(Con ou Ca): Um estudioso que é capaz de realizar magias arcanas.
+Não pode usar a mesma magia em um dia, caso o faça, recebe
+dano acumulativo(1 na primeira, 2 na segunda...) 
+Clérigo(Ca): Um monge que é capaz de realizar magias clericais.
+Paladino(Ca): Um guerreiro que seguiu o caminho sagrado.
+Habilidades de Mago e Clérigo 
+(escolher 3 além de “Escrita e Leitura” que é obrigatória) 
+Oratória, Observação, Escrita e Leitura, Inspirar, Disfarce, 
+Intimidar, Fuga, Sorte (o jogador pode repetir UM teste por dia).
+
+Grimório Básico Mago
+Ler línguas: O mago consegue ler escritos cuja língua ele desconhece.
+Ilusão(2 ações): 50% de chance de enganar um ser racional.
+Sono(3 ações): Faz adormecer um ser por 1d6/2 turnos(2d6 minutos).
+Detectar magia(1 ação): 50% de chance de descubrir um feitiço. 
+
+Mago de fogo
+Bola de fogo(2 ações): 1d6/2 +1, 1d6/3 por dois turnos.
+Meteoro(3 ações): 1d6/3, 1d6/3 por um turno.
+Mago de gelo
+Aumenta a dificuldade inimiga por 1 turno.
+Lança de gelo(2 ações): 1d6/2 +1.
+Nevasca(3 ações): 1d6/3.
+Mago arcano
+Projétil mágico(2 ações): 1d6.
+Disparos míticos(3 ações): 1d6/2.
+
+Grimório Básico Clérigo/Paladino(acrescenta 1 ação)
+Foco de luz(1 ação): Cria brilho em um objeto.
+Abençoar(2 ações): Reduz em um nível a dificuldade da ação
+de qualquer personagem, inlcusive o clérigo.(1d6/2)
+Amaldiçoar(1 ação): Aumenta em um nível a dificuldade da ação.(1d6/2)
+Curar(2 ações): 1d6/2 +1 uma vez por dia, caso contrário, sofre
+uma penalidade(1 primeira, 2 segunda...).
+
+Monstros
+
+Esqueleto                                       Saúde: 1d6/2                  Mumia                                           Saúde: 
+Raça: Morto-Vivo                             Saudável:                        Raça: Morto-Vivo                             Saudável:
+Ponto Forte: Força ou Destreza              Atordoado:                        Ponto Forte: Destreza                       Atordoado:
+Especialização: Guerreiro ou Caçador      Desesperado:                        Especialização: Não tem                   Desesperado:
+Habilidades: Combate com Armas, Forçar,  Inconsciente:                        Habilidades:                             Inconsciente:
+Intimidar.(Guerreiro)                                                         Bandagem(Prende o alvo, aumentando a
+Combate a Distância, Observação,                                              dificuldade em um turno 1d6/3 magíco),
+Rastreamento.(Caçador)                                                        Summonar Mumia(Difícil, 2 ações).
+Equipamentos e Acessórios(Pode apresentar ou não)                             Equipamentos e Acessórios
+Armadura de couro                 Loot: 1d6/2 moedas(7),                      Não tem
+Escudo                                 *Colar de Rubi(12),                    Armas        Dano
+Armas         Dano                     *Colar de Esmeralda(12),               -----       ------
+Espada      1d6/2 +1                   *Colar de Diamante(12).
+Machado     1d6/2 +2
+Arco         1d6/2        
+ 
+Zombie                                          Saúde: 1d6/2
+Raça: Morto-Vivo                             Saudável:
+Ponto Forte: Constituição                   Atordoado:
+Especialização: Não tem                   Desesperado:
+Habilidades: Morder(1d6/3, cura 1d6/3)   Inconsciente:
+Arranhar(1d6/2)
+Equipamentos e Acessórios(Pode apresentar ou não)
+Armadura de couro                 Loot: 1d6/2 moedas(4),
+Armadura de malha                      *
+Armas        Dano
+-----       ------
+
+Ogro                                            Saúde: 1d6/2 +2
+Raça: Orc                                    Saudável:
+Ponto Forte: Força                          Atordoado:
+Especialização: Guerreiro                 Desesperado:
+Habilidades: Combate com Armas, Forçar,  Inconsciente:
+Intimidar.
+Equipamentos e Acessórios
+Não tem                           Loot: 1d6 moedas(5),
+Armas        Dano
+Porrete    1d6/2 +2
+
+Dragão                                          Saúde: 1d6 +3
+Raça: Draconiano
+Ponto Forte: Força ou Destreza ou Constituição
+Especialização: Não tem
+Habilidades: Morder(1d6 +3)
+Arranhar(1d6/2 +3)
+Guspir fogo(1d6/2 +1)
+Equipamentos e Acessórios
+Não tem                           Loot: 4d6 moedas(6)
+Armas        Dano
+-----       ------

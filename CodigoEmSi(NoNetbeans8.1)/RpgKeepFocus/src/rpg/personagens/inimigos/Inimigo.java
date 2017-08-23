@@ -1,20 +1,21 @@
-package rpg.personagens;
+package rpg.personagens.inimigos;
 
+import rpg.personagens.Personagem;
 import rpg.personagens.enums.Arma;
 import rpg.personagens.enums.Armadura;
 import rpg.personagens.enums.Classe;
 import rpg.personagens.enums.Foco;
 
 /**
- * Representa um heroi, que é o tipo de personagem que o jogador cria 
- * e joga com ele(s)
+ * Classe que representa os inimigos do jogador, inimigos estes controlados 
+ * por uma "IA"
  * 
  * @author Nechelley Alves
  */
-public class Heroi extends Personagem{
+public abstract class Inimigo extends Personagem{
     
     /**
-     * Construtor da classe Heroi
+     * Construtor da classe Inimigo
      * 
      * @param nome String com o nome do personagem
      * @param classe Classe com qual sera a classe do personagem
@@ -22,16 +23,16 @@ public class Heroi extends Personagem{
      * @param arma Arma dizendo qual o tipo de arma o personagem usara
      * @param armadura Armadura com qual o tipo de armadura o personagem usara
      */
-    public Heroi(String nome, Classe classe, Foco foco, Arma arma, Armadura armadura){
+    public Inimigo(String nome, Classe classe, Foco foco, Arma arma, Armadura armadura){
         super(nome,classe,foco,arma,armadura);
     }
     
     /**
-     * Construtor que retorna um clone do Heroi p
+     * Construtor que retorna um clone do Inimigo p
      * 
      * @param p Personagem que sera clonado
      */
-    public Heroi(Personagem p){
+    public Inimigo(Personagem p){
         super(p);
     }
     
@@ -42,11 +43,15 @@ public class Heroi extends Personagem{
      */
     @Override
     public boolean getEhHeroi(){
-        return true;
+        return false;
     }
     
-    @Override
-    public void diminuiNumInstancias() {
-        //IMPEDIR QUE HEROI SE TORNE ABSTRACT
+    /**
+     * Verifica quantos tipos de inimigos existem
+     * 
+     * @return Int com a quantidade de classes de inimigos existentes
+     */
+    public static int numDeClassesDeInimigos(){
+        return 10;
     }
 }
