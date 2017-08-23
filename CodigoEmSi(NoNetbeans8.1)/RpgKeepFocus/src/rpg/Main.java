@@ -1,7 +1,5 @@
 package rpg;
 
-import rpg.excecoes.AcaoInvalidaException;
-
 /**
  *
  * @author neche
@@ -13,10 +11,6 @@ public class Main {
             TelaDoJogoAlternativa tela = new TelaDoJogoAlternativa();
             
             tela.exibirInicio();
-        }
-        catch(AcaoInvalidaException e){
-            System.out.println(e.getMessage());
-            System.out.println(e.getMotivo());
         }
         catch(Exception e){
             System.out.println(e.getMessage());
